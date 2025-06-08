@@ -1,0 +1,81 @@
+#include "stdlib.fc"
+#include "stdlib_extended.fc"
+
+// Token constants
+const NAME: string = "LeadrCoin";
+const SYMBOL: string = "LDC";
+const DECIMALS: int = 9;
+const TOTAL_SUPPLY: int = 1500000000 * (10 ^ DECIMALS);
+const TRANSFER_FEE_PERCENT: int = 4; // 4%
+
+// Owner address
+global owner: addr;
+
+// Balances mapping
+global balances: dict(addr, int);
+// Blacklist mapping
+global blacklist: dict(addr, bool);
+
+// Event to notify transfer
+event Transfer(from: addr, to: addr, amount: int);
+
+// Initialize contract
+() main() {
+    owner = msg.sender;
+    balances[owner] = TOTAL_SUPPLY;
+}
+
+// Modifier: only owner
+() only_owner() {
+    if (msg.sender != owner) {
+        throw(100); // Not authorized
+    }
+}
+
+// Check blacklist
+() check_blacklist(addr: addr) {
+    if (blacklist[addr] == true) {
+        throw(101); // Blacklisted address
+    }
+}
+
+// Transfer function with fee and blacklist check
+() transfer(to: addr, amount: int) {
+    check_blacklist(msg.sender);
+    check_blacklist(to);
+    let sender_balance = balances[msg.sender];
+    let fee = (amount * TRANSFER_FEE_PERCENT) / 100;
+    let total_amount = amount + fee;
+
+    if (sender_balance < total_amount) {
+        throw(102); // Not enough balance
+    }
+
+    balances[msg.sender] = sender_balance - total_amount;
+    balances[to] += amount;
+    balances[owner] += fee; // Fee sent to owner
+
+    emit Transfer(msg.sender, to, amount);
+}
+
+// Add address to blacklist (only owner)
+() add_to_blacklist(addr_to_block: addr) {
+    only_owner();
+    blacklist[addr_to_block] = true;
+}
+
+// Remove address from blacklist (only owner)
+() remove_from_blacklist(addr_to_unblock: addr) {
+    only_owner();
+    blacklist[addr_to_unblock] = false;
+}
+
+// Get balance
+(int) balance_of(addr_query: addr) {
+    return balances[addr_query];
+}
+
+// Get total supply
+(int) total_supply() {
+    return TOTAL_SUPPLY;
+}
