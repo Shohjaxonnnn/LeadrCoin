@@ -1,7 +1,14 @@
 import numpy as np, wave, sys
-SR = 48000; DUR = 18.6; N = int(SR * DUR)
+import json
+TL = json.load(open('timeline.json')); NEW = TL['starts']; OLD = TL['old']; END = TL['end']
+SR = 48000; DUR = END + 0.6; N = int(SR * DUR)
+def warp(t):
+    for k in range(len(OLD) - 1):
+        if t < OLD[k + 1] or k == len(OLD) - 2:
+            return NEW[k] + (t - OLD[k]) * (NEW[k + 1] - NEW[k]) / (OLD[k + 1] - OLD[k])
+S5 = NEW[4]
 rng = np.random.default_rng(7)
-BPM = 120; BEAT = 60 / BPM; BAR = 4 * BEAT
+BPM = 32 * 60 / S5; BEAT = 60 / BPM; BAR = 4 * BEAT
 
 def T(n): return np.arange(n) / SR
 def mtof(m): return 440 * 2 ** ((m - 69) / 12)
@@ -18,6 +25,8 @@ def add(buf, x, t, gain=1.0, pan=0.0):
         buf[1, i:i + len(x)] += x * gain * r * 1.414
     else:
         buf[:, i:i + x.shape[1]] += x * gain
+
+def addS(buf, x, t, gain=1.0, pan=0.0): add(buf, x, warp(t), gain, pan)
 
 def fft_filter(x, fn):
     n = len(x); X = np.fft.rfft(x); f = np.fft.rfftfreq(n, 1 / SR)
@@ -161,24 +170,24 @@ def reverb(x, secs=2.0, damp=4500):
 # ---------------- MUSIC ----------------
 music = np.zeros((2, N)); drums = np.zeros((2, N)); send = np.zeros((2, N))
 Am = [57, 60, 64, 71]; F = [53, 57, 60, 64]; C = [55, 60, 64, 67]; G = [55, 59, 62, 69]
-prog = [(Am, 45), (F, 41), (C, 48), (G, 43), (Am, 45), (F, 41), (G, 43), (C, 48), (F, 41)]
-BREAK = (13.5, 14.0)
+prog = [(Am, 45), (F, 41), (C, 48), (G, 43), (Am, 45), (F, 41), (Am, 45), (G, 43), (C, 48), (F, 41)]
+BREAK = (S5 - BEAT, S5)
 def in_break(t): return BREAK[0] <= t < BREAK[1]
 
 K = kick(); CL = clap(); HC = hat(); HO = hat(True)
 kick_times = []
 for b, (ch, root) in enumerate(prog):
     t0 = b * BAR
-    if t0 >= 18: break
-    dur = min(BAR, 18.4 - t0)
+    if t0 >= END: break
+    dur = min(BAR, END + 0.4 - t0)
     pc = pad_chord(ch, dur + 0.3)
-    if b == 6:  # build bar: pad filter rises handled by fade-out at break
-        pc[:, S(1.5):] *= np.linspace(1, 0, pc.shape[1] - S(1.5))
+    if b == 7:  # build bar: pad filter rises handled by fade-out at break
+        pc[:, S(BAR * 0.75):] *= np.linspace(1, 0, pc.shape[1] - S(BAR * 0.75))
     add(music, pc, t0, gain=1.0)
     add(send, pc, t0, gain=0.6)
     for k in range(4):
         tb = t0 + k * BEAT
-        if tb >= 17.9 or in_break(tb): continue
+        if tb >= END - 0.1 or in_break(tb): continue
         kick_times.append(tb)
         add(drums, K, tb, 0.95)
         if b >= 1 and k in (1, 3): add(drums, CL, tb, 0.45, 0.05); add(send, np.stack([CL, CL]), tb, 0.25)
@@ -197,10 +206,10 @@ for b, (ch, root) in enumerate(prog):
         arp = [ch[0] + 12, ch[1] + 12, ch[2] + 12, ch[3] + 12, ch[2] + 12, ch[1] + 12]
         for s16 in range(16):
             ts = t0 + s16 * BEAT / 4
-            if ts >= 17.9 or in_break(ts) or (b == 6 and ts > 13.5): continue
+            if ts >= END - 0.1 or in_break(ts) or (b == 7 and ts > BREAK[0]): continue
             pl = pluck(arp[s16 % len(arp)])
             pan = 0.45 if s16 % 2 else -0.45
-            add(music, pl, ts, 0.9 if b >= 7 else 0.65, pan)
+            add(music, pl, ts, 0.9 if b >= 8 else 0.65, pan)
             add(send, pl, ts, 0.5, pan)
 
 # sidechain pumping on music bus
@@ -212,72 +221,82 @@ music *= sc
 
 # ---------------- SFX ----------------
 sfx = np.zeros((2, N))
-add(sfx, impact(2.4), 0.02, 0.85); add(send, np.stack([impact(1.0)] * 2), 0.02, 0.3)
-add(sfx, bell(mtof(81), 2.0) * 0.25, 0.02, 1.0)
-add(sfx, whoosh_st(0.45, -0.3, 0.3, f_lo=600, f_hi=6000), 0.15, 0.22)
-add(sfx, whoosh_st(0.45, 0.3, -0.3, f_lo=600, f_hi=6000), 0.36, 0.2)
-add(sfx, whoosh_st(0.75, -1, -0.2, f_lo=200, f_hi=3500), 0.42, 0.42)
-add(sfx, whoosh_st(0.75, 1, 0.2, f_lo=220, f_hi=3800), 0.52, 0.42)
-add(sfx, pop(1500, 320), 1.28, 0.55); add(sfx, bell(mtof(88), 1.6) * 0.22, 1.3, 1.0, 0.1)
-add(send, np.stack([bell(mtof(88), 1.6)] * 2) * 0.22, 1.3, 1.0)
-add(sfx, whoosh_st(0.5, 0, 0, f_lo=900, f_hi=7000) * 0.6, 1.75, 0.2)
+addS(sfx, impact(2.4), 0.02, 0.85); addS(send, np.stack([impact(1.0)] * 2), 0.02, 0.3)
+addS(sfx, bell(mtof(81), 2.0) * 0.25, 0.02, 1.0)
+addS(sfx, whoosh_st(0.45, -0.3, 0.3, f_lo=600, f_hi=6000), 0.15, 0.22)
+addS(sfx, whoosh_st(0.45, 0.3, -0.3, f_lo=600, f_hi=6000), 0.36, 0.2)
+addS(sfx, whoosh_st(0.75, -1, -0.2, f_lo=200, f_hi=3500), 0.42, 0.42)
+addS(sfx, whoosh_st(0.75, 1, 0.2, f_lo=220, f_hi=3800), 0.52, 0.42)
+addS(sfx, pop(1500, 320), 1.28, 0.55); addS(sfx, bell(mtof(88), 1.6) * 0.22, 1.3, 1.0, 0.1)
+addS(send, np.stack([bell(mtof(88), 1.6)] * 2) * 0.22, 1.3, 1.0)
+addS(sfx, whoosh_st(0.5, 0, 0, f_lo=900, f_hi=7000) * 0.6, 1.75, 0.2)
 # transitions
 for tc in (3.5, 7.0, 10.5):
-    add(sfx, whoosh_st(0.7, -0.8, 0.8, f_lo=180, f_hi=5500), tc - 0.48, 0.5)
-    add(sfx, impact(0.6, 0.6) * 0.5, tc, 0.4)
+    addS(sfx, whoosh_st(0.7, -0.8, 0.8, f_lo=180, f_hi=5500), tc - 0.48, 0.5)
+    addS(sfx, impact(0.6, 0.6) * 0.5, tc, 0.4)
 # scene 2
-add(sfx, whoosh_st(0.6, 0, 0, f_lo=300, f_hi=3000), 3.75, 0.3)
-add(sfx, click(2600), 4.15, 0.35, -0.3); add(sfx, click(2900), 4.4, 0.35, -0.3)
+addS(sfx, whoosh_st(0.6, 0, 0, f_lo=300, f_hi=3000), 3.75, 0.3)
+addS(sfx, click(2600), 4.15, 0.35, -0.3); addS(sfx, click(2900), 4.4, 0.35, -0.3)
 for tt, m in ((4.62, 84), (4.87, 88)):
-    add(sfx, pop(1700, 500, 0.09), tt, 0.45, 0.4); add(sfx, bell(mtof(m), 1.0) * 0.18, tt, 1.0, 0.4)
-    add(send, np.stack([bell(mtof(m), 1.0)] * 2) * 0.18, tt, 1.0)
-add(sfx, pop(1200, 280), 5.22, 0.55, -0.4); add(sfx, pop(1400, 330), 5.42, 0.55, 0.4)
-add(sfx, whoosh_st(0.5, -0.4, 0.4, f_lo=500, f_hi=4000), 5.65, 0.25)
+    addS(sfx, pop(1700, 500, 0.09), tt, 0.45, 0.4); addS(sfx, bell(mtof(m), 1.0) * 0.18, tt, 1.0, 0.4)
+    addS(send, np.stack([bell(mtof(m), 1.0)] * 2) * 0.18, tt, 1.0)
+addS(sfx, pop(1200, 280), 5.22, 0.55, -0.4); addS(sfx, pop(1400, 330), 5.42, 0.55, 0.4)
+addS(sfx, whoosh_st(0.5, -0.4, 0.4, f_lo=500, f_hi=4000), 5.65, 0.25)
 # scene 3 slams
 for i, tt in enumerate((7.1, 7.45, 7.8)):
-    add(sfx, whoosh_st(0.3, -0.9, 0.0, f_lo=800, f_hi=6000, peak=0.85), tt - 0.25, 0.35)
-    add(sfx, impact(0.7, 0.9) * 0.7, tt + 0.03, 0.6 + 0.1 * i)
-add(sfx, whoosh_st(0.6, 0, 0, f_lo=300, f_hi=3000), 8.15, 0.3)
+    addS(sfx, whoosh_st(0.3, -0.9, 0.0, f_lo=800, f_hi=6000, peak=0.85), tt - 0.25, 0.35)
+    addS(sfx, impact(0.7, 0.9) * 0.7, tt + 0.03, 0.6 + 0.1 * i)
+addS(sfx, whoosh_st(0.6, 0, 0, f_lo=300, f_hi=3000), 8.15, 0.3)
 # counter ticks 8.6 -> 9.8 slowing
 tt = 8.6; k = 0
 while tt < 9.75:
-    add(sfx, click(3600 - k * 40), tt, 0.3, 0.2 * np.sin(k))
+    addS(sfx, click(3600 - k * 40), tt, 0.3, 0.2 * np.sin(k))
     p = (tt - 8.6) / 1.2; tt += 0.035 + 0.11 * p ** 2; k += 1
-add(sfx, bell(mtof(84), 1.6) * 0.3, 9.8, 1.0); add(sfx, bell(mtof(91), 1.6) * 0.18, 9.86, 1.0)
-add(send, np.stack([bell(mtof(84), 1.6)] * 2) * 0.3, 9.8, 1.0)
+addS(sfx, bell(mtof(84), 1.6) * 0.3, 9.8, 1.0); addS(sfx, bell(mtof(91), 1.6) * 0.18, 9.86, 1.0)
+addS(send, np.stack([bell(mtof(84), 1.6)] * 2) * 0.3, 9.8, 1.0)
 # scene 4
-add(sfx, whoosh_st(0.6, 0, 0, f_lo=300, f_hi=3000), 10.75, 0.3)
+addS(sfx, whoosh_st(0.6, 0, 0, f_lo=300, f_hi=3000), 10.75, 0.3)
 for tt, m in ((11.37, 79), (11.67, 83), (11.97, 86)):
-    add(sfx, click(2700), tt - 0.2, 0.3, -0.3)
-    add(sfx, pop(1700, 500, 0.09), tt, 0.45, 0.35); add(sfx, bell(mtof(m + 5), 1.0) * 0.18, tt, 1.0, 0.35)
-    add(send, np.stack([bell(mtof(m + 5), 1.0)] * 2) * 0.16, tt, 1.0)
+    addS(sfx, click(2700), tt - 0.2, 0.3, -0.3)
+    addS(sfx, pop(1700, 500, 0.09), tt, 0.45, 0.35); addS(sfx, bell(mtof(m + 5), 1.0) * 0.18, tt, 1.0, 0.35)
+    addS(send, np.stack([bell(mtof(m + 5), 1.0)] * 2) * 0.16, tt, 1.0)
 for tt, f in ((12.57, 1100), (12.77, 1300), (12.97, 1550)):
-    add(sfx, pop(f, f / 4.5), tt, 0.55, (tt - 12.77) * 4)
+    addS(sfx, pop(f, f / 4.5), tt, 0.55, (tt - 12.77) * 4)
 # build & drop
-add(sfx, riser(1.1), 12.9, 0.5)
-add(send, np.stack([riser(1.1)] * 2), 12.9, 0.25)
-add(sfx, impact(3.0, 1.2), 14.0, 1.0); add(send, np.stack([impact(1.5)] * 2), 14.0, 0.45)
+add(sfx, riser(1.1), S5 - 1.1, 0.5)
+add(send, np.stack([riser(1.1)] * 2), S5 - 1.1, 0.25)
+addS(sfx, impact(3.0, 1.2), 14.0, 1.0); addS(send, np.stack([impact(1.5)] * 2), 14.0, 0.45)
 for i, m in enumerate((84, 88, 91, 96)):
-    add(sfx, bell(mtof(m), 1.8) * 0.16, 14.05 + i * 0.06, 1.0, (-0.6, -0.2, 0.2, 0.6)[i])
-add(send, np.stack([bell(mtof(96), 1.8)] * 2) * 0.2, 14.2, 1.0)
-add(sfx, whoosh_st(0.5, -0.5, 0.5, f_lo=500, f_hi=5000), 14.15, 0.25)
-add(sfx, pop(1300, 300), 14.92, 0.5, -0.3); add(sfx, pop(1500, 350), 15.12, 0.5, 0.3)
-add(sfx, whoosh_st(0.55, 0, 0, f_lo=250, f_hi=3500), 15.15, 0.35)
-add(sfx, pop(900, 160, 0.18), 15.55, 0.6)
+    addS(sfx, bell(mtof(m), 1.8) * 0.16, 14.05 + i * 0.06, 1.0, (-0.6, -0.2, 0.2, 0.6)[i])
+addS(send, np.stack([bell(mtof(96), 1.8)] * 2) * 0.2, 14.2, 1.0)
+addS(sfx, whoosh_st(0.5, -0.5, 0.5, f_lo=500, f_hi=5000), 14.15, 0.25)
+addS(sfx, pop(1300, 300), 14.92, 0.5, -0.3); addS(sfx, pop(1500, 350), 15.12, 0.5, 0.3)
+addS(sfx, whoosh_st(0.55, 0, 0, f_lo=250, f_hi=3500), 15.15, 0.35)
+addS(sfx, pop(900, 160, 0.18), 15.55, 0.6)
 # shine sparkle
 for i in range(6):
     m = (96, 100, 103, 108, 103, 108)[i]
-    add(sfx, bell(mtof(m), 0.8, idx=1.2, ratio=2.0) * 0.08, 16.45 + i * 0.07, 1.0, -0.7 + i * 0.28)
-add(send, np.stack([bell(mtof(103), 0.8)] * 2) * 0.1, 16.5, 1.0)
+    addS(sfx, bell(mtof(m), 0.8, idx=1.2, ratio=2.0) * 0.08, 16.45 + i * 0.07, 1.0, -0.7 + i * 0.28)
+addS(send, np.stack([bell(mtof(103), 0.8)] * 2) * 0.1, 16.5, 1.0)
 
 # ---------------- MIX ----------------
 rev = reverb(send, 2.2)
-mix = music * 0.9 + drums * 0.5 + sfx * 1.15 + rev * 0.35
+# voice + ducking
+import wave as _w
+with _w.open('voice_track.wav') as w: vo = np.frombuffer(w.readframes(w.getnframes()), np.int16).astype(np.float64) / 32767
+voice = np.zeros(N); voice[:min(N, len(vo))] = vo[:N]
+env = np.abs(voice); k = S(0.25); env = np.convolve(env, np.ones(k) / k, 'same'); env = np.minimum(1, env / (np.percentile(env[env > 1e-4], 60) + 1e-9))
+duck = 1 - 0.62 * env; duckS = 1 - 0.3 * env
+bed = music * 0.9 + drums * 0.5 + rev * 0.35
+act = env > 0.5
+vr = np.sqrt(np.mean(voice[act] ** 2)); br = np.sqrt(np.mean((bed[:, act] * duck[act]) ** 2))
+VG = (br * 10 ** (11 / 20)) / vr
+print('voice gain', VG)
+mix = bed * duck + sfx * 1.15 * duckS + np.stack([voice, voice]) * VG
 mix = np.stack([fft_filter(c, lambda f: hp(f, 28, 2)) for c in mix])
 # fade out end
-fe = S(17.3); mix[:, fe:] *= np.linspace(1, 0, N - fe) ** 2
-mix[:, S(18.0):] = 0
-mix = mix[:, :S(18.0)]
+fe = S(END - 0.6); mix[:, fe:] *= np.linspace(1, 0, N - fe) ** 2
+mix = mix[:, :S(END)]
 mix /= np.max(np.abs(mix)) + 1e-9
 mix = np.tanh(mix * 1.15) / np.tanh(1.15)  # soft limiter
 mix *= 0.95

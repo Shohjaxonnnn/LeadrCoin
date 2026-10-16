@@ -228,7 +228,10 @@ rise('s5disc',16.0,0.6,20);
 A('header',[{opacity:1},{opacity:0}],13.7,0.3,'in',{fill:'forwards'});
 
 // scene visibility
-function render(t){
+const TL_NEW=[0.0, 3.987, 8.177, 11.761, 15.881, 20.0], TL_OLD=[0, 3.5, 7, 10.5, 14, 18];
+function unwarp(t){for(let k=0;k<TL_NEW.length-1;k++){if(t<TL_NEW[k+1]||k==TL_NEW.length-2)return TL_OLD[k]+(t-TL_NEW[k])*(TL_OLD[k+1]-TL_OLD[k])/(TL_NEW[k+1]-TL_NEW[k]);}}
+function render(tn){
+  const t=unwarp(tn);
   for(const [k,[a,b]] of Object.entries(W)) $(k).style.visibility=(t>=a-0.001&&t<b)?'visible':'hidden';
   // header hidden in CTA (logo is big there)
   const p=Math.min(1,Math.max(0,(t-8.6)/1.2)), e=p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;
