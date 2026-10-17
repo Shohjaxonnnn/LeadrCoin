@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<title>Tonga yaqin — stickman animatsiya</title>
+<style>
+  @font-face { font-family: Montserrat; font-weight: 500; src: url(fonts/montserrat-latin-500-normal.woff2) format('woff2'); }
+  @font-face { font-family: Montserrat; font-weight: 700; src: url(fonts/montserrat-latin-700-normal.woff2) format('woff2'); }
+  @font-face { font-family: Montserrat; font-weight: 800; src: url(fonts/montserrat-latin-800-normal.woff2) format('woff2'); }
+  html, body { margin: 0; background: #000; height: 100%; }
+  body { display: flex; align-items: center; justify-content: center; }
+  canvas { height: 100vh; aspect-ratio: 9 / 16; }
+  body.render canvas { height: auto; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script src="scene.js"></script>
+<script>
+  // ?render=1 → render.mjs drives the frames; otherwise play a live preview (click to restart).
+  const params = new URLSearchParams(location.search);
+  const canvas = document.getElementById('c');
+  window.ready = (async () => {
+    await Promise.all([500, 700, 800].map(w => document.fonts.load(`${w} 40px Montserrat`, 'AOʻ‘')));
+    SCENE.initScene(canvas);
+  })();
+  window.frameData = async (t, type = 'image/jpeg', q = 0.95) => { SCENE.renderFrame(t); return canvas.toDataURL(type, q); };
+  if (params.get('render')) document.body.classList.add('render');
+  else window.ready.then(() => {
+    let start = performance.now() - (parseFloat(params.get('t')) || 0) * 1000;
+    canvas.onclick = () => (start = performance.now());
+    const loop = now => { SCENE.renderFrame(((now - start) / 1000) % SCENE.DURATION); requestAnimationFrame(loop); };
+    requestAnimationFrame(loop);
+  });
+</script>
+</body>
+</html>
