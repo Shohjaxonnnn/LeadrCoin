@@ -1,0 +1,148 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../base.css">
+<style>
+.shelf{position:absolute;left:120px;width:840px;height:26px;border-radius:13px;background:linear-gradient(180deg,#2a5a4c,#123a31);box-shadow:0 30px 60px rgba(0,0,0,.5)}
+.dust{position:absolute;width:8px;height:8px;border-radius:50%;background:rgba(220,240,232,.35)}
+.qbub{position:absolute;width:150px;height:150px;border-radius:50%;background:#fbfcff;color:#032b22;font-weight:900;font-size:96px;display:flex;align-items:center;justify-content:center;box-shadow:0 20px 50px rgba(0,0,0,.4)}
+.arrow{position:absolute;height:12px;border-radius:6px;background:repeating-linear-gradient(90deg,var(--g) 0 26px,transparent 26px 40px);transform-origin:left}
+.tag{position:absolute;padding:12px 26px;border-radius:999px;background:var(--g);color:#032b22;font-weight:800;font-size:30px;letter-spacing:2px}
+.barcard{position:absolute;left:60px;width:960px;border-radius:40px;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);padding:36px 40px}
+.barlbl{font-size:34px;font-weight:600;color:#cfe5dd}
+.bar{position:relative;height:84px;border-radius:24px;background:rgba(255,255,255,.08);margin-top:22px;overflow:hidden}
+.seg{position:absolute;top:0;bottom:0;transform-origin:left;display:flex;align-items:center;padding-left:22px;font-weight:800;font-size:30px;white-space:nowrap}
+.legend{display:flex;gap:30px;margin-top:20px;font-size:28px;font-weight:600;color:#cfe5dd}
+.legend i{display:inline-block;width:22px;height:22px;border-radius:6px;margin-right:10px;vertical-align:-3px}
+.month{position:absolute;width:62px;height:62px;border-radius:16px;background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.12);font-size:24px;font-weight:700;color:#9fc4b8;display:flex;align-items:center;justify-content:center}
+</style></head>
+<body><div id="stage">
+<canvas id="gl" width="1080" height="1920" style="position:absolute;left:0;top:0;width:1080px;height:1920px;z-index:1"></canvas>
+
+<div class="scene" id="s0" style="z-index:2">
+  <div class="abs title" style="left:60px;top:300px;font-size:100px">
+    <span class="line"><span id="a0">Eski telefon</span></span>
+    <span class="line"><span id="b0" class="green">chang bosyaptimi?</span></span>
+  </div>
+  <div class="shelf" id="shelf" style="top:1400px"></div>
+  <div id="dusts"></div>
+  <div class="qbub" id="q0" style="left:780px;top:740px">?</div>
+</div>
+
+<div class="scene" id="s1" style="z-index:2">
+  <div class="abs title" style="left:60px;top:300px;font-size:104px">
+    <span class="line"><span id="a1">Olib keling —</span></span>
+    <span class="line"><span id="b1" class="green">narxga hisoblaymiz</span></span>
+  </div>
+  <div class="tag" id="lblOld" style="left:150px;top:640px;background:rgba(255,255,255,.12);color:#fff">ESKI</div>
+  <div class="tag" id="lblNew" style="left:770px;top:640px">YANGI</div>
+  <div class="arrow" id="arr" style="left:430px;width:220px;top:995px"></div>
+  <div class="barcard" id="bc1" style="top:1330px">
+    <div class="barlbl">Yangi qurilma narxi</div>
+    <div class="bar"><div class="seg" id="g1" style="left:0;width:40%;background:var(--g);color:#032b22">Eski qurilma</div></div>
+  </div>
+</div>
+
+<div class="scene" id="s2" style="z-index:2">
+  <div class="abs title" style="left:60px;top:300px;font-size:120px">
+    <span class="line"><span id="a2">Qolgani —</span></span>
+    <span class="line"><span id="b2" class="green">halol nasiyada</span></span>
+  </div>
+  <div class="barcard" id="bc2" style="top:620px">
+    <div class="barlbl">Yangi qurilma narxi</div>
+    <div class="bar">
+      <div class="seg" style="left:0;width:40%;background:var(--g);color:#032b22">Eski qurilma</div>
+      <div class="seg" id="n2" style="left:40%;width:60%;background:repeating-linear-gradient(135deg,#0d6b4c 0 18px,#0a5a40 18px 36px);color:#e6fff4">Nasiya · 12–24 oy</div>
+    </div>
+    <div class="legend"><span><i style="background:var(--g)"></i>Trade-in</span><span><i style="background:#0d6b4c"></i>Oyma-oy to‘lov</span></div>
+  </div>
+  <div id="months"></div>
+  <div class="chip" id="c21" style="left:60px;top:1140px"><b>0%</b> foiz</div>
+  <div class="chip" id="c22" style="left:390px;top:1140px"><b>0 so‘m</b> boshlang‘ich</div>
+</div>
+
+<div class="scene" id="s3" style="z-index:2">
+  <div class="abs title" style="left:0;right:0;top:300px;text-align:center;font-size:96px">
+    <span class="line"><span id="a3">Eskisini topshiring,</span></span>
+    <span class="line"><span id="b3" class="green">yangisini oling!</span></span>
+  </div>
+  <div class="btn" id="btn3" style="left:140px;width:800px;top:1330px;height:140px;overflow:hidden">Trade-in qilish
+    <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#032b22" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    <div class="shine" id="sh3" style="left:-200px"></div>
+  </div>
+  <div class="abs" id="disc3" style="left:0;right:0;top:1500px;text-align:center;font-size:27px;color:rgba(230,239,236,.6);font-weight:500">Baholash va yakuniy shartlar individual belgilanadi</div>
+</div>
+</div>
+
+<script>window.PILL = 'TRADE-IN'; window.USE3D = true;</script>
+<script type="importmap">{"imports":{"three":"../lib/three.module.js"}}</script>
+<script type="module" src="../phones.js"></script>
+<script>
+window.BUILD = ({ S, End, V, A, sfx, lineIn, pop, rise, slideX, fadeIn, pulse, float, $ }) => {
+  // dust particles (deterministic)
+  let h = ''; for (let i = 0; i < 26; i++) { const x = 140 + ((i * 337) % 800), y = 900 + ((i * 211) % 520); h += `<div class="dust" id="d${i}" style="left:${x}px;top:${y}px;opacity:${0.3 + (i % 5) * 0.12}"></div>`; }
+  $('dusts').innerHTML = h;
+  for (let i = 0; i < 26; i++) A('d' + i, [{ transform: 'translate(0,0)' }, { transform: `translate(${(i % 2 ? 1 : -1) * (20 + i % 7 * 6)}px,-${120 + (i % 4) * 40}px)` }], 0, 3.5, 'lin');
+
+  // S0
+  lineIn('a0', 0.25); lineIn('b0', 0.45);
+  rise('shelf', 0.3, 0.8, 80);
+  pop('q0', V(0)[0] + 1.3, 0.6, { arg: 1500 }); A('q0', [{ transform: 'rotate(-10deg)' }, { transform: 'rotate(10deg)' }], V(0)[0] + 1.9, 0.4, 'io', { iterations: 4, direction: 'alternate', composite: 'add' });
+  sfx('whoosh', 0.55); sfx('impact', 1.15, { gain: 0.5, arg: 0.6 });
+
+  // S1
+  const t1 = S(1);
+  lineIn('a1', t1 + 0.1); lineIn('b1', t1 + 0.25);
+  pop('lblOld', t1 + 0.45); pop('lblNew', t1 + 0.95, 0.6, { arg: 1500, pan: 0.4 });
+  A('arr', [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], t1 + 0.8, 0.6, 'out'); sfx('swish', t1 + 0.8);
+  A('arr', [{ backgroundPosition: '0 0' }, { backgroundPosition: '80px 0' }], t1 + 0.8, 1, 'lin', { iterations: 5, composite: 'replace' });
+  rise('bc1', t1 + 1.2, 0.7, 100); sfx('swish', t1 + 1.2, { gain: 0.8 });
+  A('g1', [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], V(1)[1] - 1.5, 0.9, 'out'); sfx('cash', V(1)[1] - 0.7);
+  sfx('whoosh', t1 + 0.9, { pan: 0.5 });
+
+  // S2
+  const t2 = S(2);
+  lineIn('a2', t2 + 0.1); lineIn('b2', t2 + 0.25);
+  rise('bc2', t2 + 0.2, 0.7, 80);
+  A('n2', [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], t2 + 0.8, 1.0, 'out'); sfx('swish', t2 + 0.85);
+  let mh = ''; for (let i = 0; i < 12; i++) mh += `<div class="month" id="m${i}" style="left:${60 + (i % 12) * 80}px;top:1000px">${i + 1}</div>`;
+  $('months').innerHTML = mh;
+  const m0 = t2 + 1.6, md = Math.min(0.17, (V(2)[1] - 0.9 - m0) / 12);
+  for (let i = 0; i < 12; i++) {
+    A('m' + i, [{ opacity: 0, transform: 'translateY(30px)' }, { opacity: 1, transform: 'none' }], t2 + 1.2 + i * 0.03, 0.4);
+    A('m' + i, [{ background: 'rgba(255,255,255,.07)', color: '#9fc4b8' }, { background: '#02f894', color: '#032b22' }], m0 + i * md, 0.15, 'out', { composite: 'replace' });
+    sfx('click', m0 + i * md, { arg: 2400 + i * 90, gain: 0.8 });
+  }
+  pop('c21', V(2)[1] - 0.9, 0.6, { arg: 1200, pan: -0.4 }); pop('c22', V(2)[1] - 0.6, 0.6, { arg: 1450, pan: 0.4 });
+
+  // S3
+  const t3 = S(3);
+  lineIn('a3', t3 + 0.1); lineIn('b3', t3 + 0.25);
+  A('btn3', [{ opacity: 0, transform: 'translateY(80px) scale(.8)' }, { opacity: 1, transform: 'none' }], t3 + 1.3, 0.7, 'back'); sfx('pop', t3 + 1.35, { arg: 900 });
+  pulse('btn3', t3 + 2.1, 6, 1.045, 0.45);
+  A('sh3', [{ transform: 'translateX(0) skewX(-20deg)' }, { transform: 'translateX(1300px) skewX(-20deg)' }], t3 + 2.3, 0.9, 'io'); sfx('sparkle', t3 + 2.35);
+  rise('disc3', t3 + 1.8, 0.6, 20);
+  sfx('whoosh', t3 + 0.3);
+
+  // 3D phones
+  const e0 = End(0), e1 = End(1);
+  window.PHONE3D.setTracks({
+    old: { color: 'qora', phase: 0, keys: [
+      { t: 0.3, x: 540, y: 1700, s: 0.95, rx: -1.15, ry: 0.5, rz: 0.15, o: 0 },
+      { t: 1.15, y: 1180, o: 1, ry: 0.25, e: 'out' },
+      { t: e0 - 0.3, y: 1170, ry: 0.15 },
+      { t: e0 + 0.5, x: 300, y: 1010, s: 0.62, rx: 0, ry: 0.35, rz: 0.06 },
+      { t: e1 - 0.3, x: 300, y: 1010, ry: 0.25 },
+      { t: e1 + 0.2, x: -200, y: 900, o: 0, ry: -1.0 } ] },
+    neu: { color: 'bordo', phase: 1.6, keys: [
+      { t: S(1) + 0.75, x: 1250, y: 1010, s: 0.62, rx: 0, ry: -6.6, rz: -0.06, o: 0 },
+      { t: S(1) + 1.55, x: 790, o: 1, ry: -0.3, e: 'out' },
+      { t: e1 - 0.3, x: 790, ry: -0.35 },
+      { t: e1 + 0.2, x: 1300, y: 900, o: 0 },
+      { t: S(3) + 0.1, x: 540, y: 1700, s: 0.8, ry: 6.0, rz: 0, o: 0 },
+      { t: S(3) + 1.1, x: 540, y: 960, o: 1, ry: 0.3, e: 'out' },
+      { t: End(3), y: 960, ry: -0.1 } ] },
+  });
+};
+</script>
+<script src="../engine.js"></script>
+</body></html>

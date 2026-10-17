@@ -1,0 +1,7 @@
+{"scenes": [
+ "Nasiyani qanday rasmiylashtirasiz? Atigi uch qadam!",
+ "Birinchi: o‘zingizga yoqqan qurilmani tanlang.",
+ "Ikkinchi: pasport va plastik kartangizni bering.",
+ "Uchinchi: rasmiylashtiramiz — qurilma shu kuniyoq qo‘lingizda!",
+ "Butun O‘zbekiston bo‘ylab yetkazib beramiz. Terabayt yigirma to‘rt."],
+ "music": {"chords": ["Dm", "Bb", "F", "C"], "seed": 31, "bpm": 120, "arp": [0, 1, 2, 3, 1, 2]}}

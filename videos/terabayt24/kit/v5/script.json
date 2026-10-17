@@ -1,0 +1,7 @@
+{"scenes": [
+ "Kartangizda aylanma kam-u, limit yetmayaptimi?",
+ "Xavotir olmang — Terabayt yigirma to‘rtda yechim bor.",
+ "Avtomobil texpasporti bilan ham nasiya rasmiylashtiramiz.",
+ "Yigirma yoshdan, o‘n ikki oydan yigirma to‘rt oygacha.",
+ "Bizga yozing yoki do‘konga keling!"],
+ "music": {"chords": ["Am", "F", "C", "G"], "drop_chords": ["F", "G", "Am", "C"], "transpose": -2, "seed": 41, "bpm": 116, "half_intro": true}}

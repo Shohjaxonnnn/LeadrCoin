@@ -1,0 +1,105 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../base.css">
+<style>
+#panel{position:absolute;left:60px;width:960px;top:560px;height:940px;border-radius:48px;background:rgba(4,30,26,.72);border:2px solid rgba(255,255,255,.12);overflow:hidden;box-shadow:0 40px 90px rgba(0,0,0,.45);z-index:2}
+.ph{height:130px;display:flex;align-items:center;gap:24px;padding:0 34px;background:rgba(255,255,255,.05);border-bottom:2px solid rgba(255,255,255,.08)}
+.av{width:84px;height:84px;border-radius:50%;background:#0b3d33;display:flex;align-items:center;justify-content:center;border:3px solid var(--g)}
+.nm{font-size:40px;font-weight:800}
+.st{font-size:28px;font-weight:500;color:var(--g);position:relative;height:34px}
+.st span{position:absolute;left:0;top:0;white-space:nowrap}
+#area{position:absolute;left:0;right:0;top:132px;bottom:0;overflow:hidden}
+#inner{position:absolute;left:0;right:0;top:0}
+.msg{position:absolute;max-width:720px;padding:26px 32px;border-radius:36px;font-size:38px;line-height:1.3;font-weight:600}
+.me{right:34px;background:#fbfcff;color:#14181d;border-bottom-right-radius:10px}
+.bot{left:34px;background:var(--g);color:#032b22;border-bottom-left-radius:10px}
+.tm{display:block;text-align:right;font-size:22px;font-weight:600;opacity:.5;margin-top:6px}
+.typing{position:absolute;left:34px;width:150px;height:84px;border-radius:36px;border-bottom-left-radius:10px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;gap:12px}
+.typing i{width:16px;height:16px;border-radius:50%;background:#cfe5dd}
+.att{display:flex;align-items:center;gap:24px;margin-top:18px;background:rgba(3,43,34,.12);border-radius:24px;padding:18px 22px}
+.att .ai{width:90px;height:90px;border-radius:20px;background:#032b22;display:flex;align-items:center;justify-content:center;flex:none}
+.mchip{display:inline-block;margin:14px 10px 0 0;padding:12px 22px;border-radius:999px;background:#032b22;color:var(--g);font-weight:800;font-size:34px}
+</style></head>
+<body><div id="stage">
+
+<div class="scene" id="s0" style="z-index:3"><div class="abs title" style="left:60px;top:300px;font-size:104px"><span class="line"><span id="a0">Limit</span></span><span class="line"><span id="b0" class="green">yetmayaptimi?</span></span></div></div>
+<div class="scene" id="s1" style="z-index:3"><div class="abs title" style="left:60px;top:300px;font-size:104px"><span class="line"><span id="a1">Xavotir olmang —</span></span><span class="line"><span id="b1" class="green">yechim bor!</span></span></div></div>
+<div class="scene" id="s2" style="z-index:3"><div class="abs title" style="left:60px;top:300px;font-size:104px"><span class="line"><span id="a2">Texpasport</span></span><span class="line"><span id="b2" class="green">ham bo‘ladi</span></span></div></div>
+<div class="scene" id="s3" style="z-index:3"><div class="abs title" style="left:60px;top:300px;font-size:104px"><span class="line"><span id="a3">Shartlar</span></span><span class="line"><span id="b3" class="green">juda oddiy</span></span></div></div>
+<div class="scene" id="s4" style="z-index:3">
+  <div class="abs title" style="left:0;right:0;top:330px;text-align:center;font-size:118px"><span class="line"><span id="a4">Bizga yozing</span></span><span class="line"><span id="b4" class="green">yoki keling!</span></span></div>
+  <div class="btn" id="btn4" style="left:140px;width:800px;top:760px;height:140px;overflow:hidden">
+    <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#032b22" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 4L3 11l6 2.5M21 4l-4 16-8-6.5M21 4L9 13.5V19l3-3"/></svg>Yozish
+    <div class="shine" id="sh4" style="left:-200px"></div></div>
+  <div class="chip" id="c41" style="left:50%;top:950px;transform:translateX(-50%)"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#02f894" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l9-6 9 6v10H3z"/><path d="M9 20v-6h6v6"/></svg>Yoki do‘konga keling</div>
+  <div class="abs" id="disc4" style="left:0;right:0;top:1100px;text-align:center;font-size:27px;color:rgba(230,239,236,.6);font-weight:500">Yakuniy shartlar rasmiylashtirishda individual belgilanadi</div>
+</div>
+
+<div id="panel">
+  <div class="ph"><div class="av"><svg width="50" height="42" viewBox="0 0 62 52"><path d="M2 6 Q2 2 6 2.6 L27 6 Q30 6.6 30 10 L30 49 Q30 51 27 50.4 L6 47 Q2 46.4 2 42Z" fill="#02f894"/><path d="M60 6 Q60 2 56 2.6 L35 6 Q32 6.6 32 10 L32 49 Q32 51 35 50.4 L56 47 Q60 46.4 60 42Z" fill="#02f894"/></svg></div>
+    <div><div class="nm">Terabayt24</div><div class="st"><span id="on">onlayn</span><span id="wr" style="opacity:0">yozmoqda…</span></div></div></div>
+  <div id="area"><div id="inner">
+    <div class="msg me" id="m1">Kartamda aylanma kam, limit yetmayapti. Nasiya olsam bo‘ladimi?<span class="tm">10:24</span></div>
+    <div class="msg bot" id="m2">Albatta! Xavotir olmang — Terabayt24’da yechim bor<span class="tm">10:24</span></div>
+    <div class="msg bot" id="m3">Avtomobil texpasporti bilan ham rasmiylashtiramiz
+      <div class="att"><div class="ai"><svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#02f894" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 16l1.5-5h11l1.5 5M4 16h16v3H4z"/><circle cx="7.5" cy="19" r="1.3"/><circle cx="16.5" cy="19" r="1.3"/><path d="M8 11l1-3h6l1 3"/></svg></div>
+      <div><div style="font-weight:800">Texpasport</div><div style="font-size:30px;font-weight:600;opacity:.75">limitni oshirishga yordam beradi</div></div></div><span class="tm">10:25</span></div>
+    <div class="msg bot" id="m4">Shartlar:<br><span class="mchip" id="q1">20 yoshdan</span><span class="mchip" id="q2">12–24 oy</span><span class="mchip" id="q3">0% foiz</span><span class="tm">10:25</span></div>
+    <div class="msg me" id="m5">Zo‘r, hozir boraman!<span class="tm">10:26</span></div>
+    <div class="typing" id="ty2"><i></i><i></i><i></i></div>
+    <div class="typing" id="ty3"><i></i><i></i><i></i></div>
+    <div class="typing" id="ty4"><i></i><i></i><i></i></div>
+  </div></div>
+</div>
+</div>
+
+<script>window.PILL = 'SAVOL-JAVOB';</script>
+<script>
+window.BUILD = ({ S, End, V, A, sfx, lineIn, pop, rise, slideX, fadeIn, pulse, float, $ }) => {
+  const AREA = 940 - 132, GAP = 26;
+  // layout
+  const ids = ['m1', 'm2', 'm3', 'm4', 'm5'], top = {}; let y = 34;
+  ids.forEach((id) => { top[id] = y; $(id).style.top = y + 'px'; y += $(id).offsetHeight + GAP; });
+  ['ty2', 'ty3', 'ty4'].forEach((id, i) => { $(id).style.top = top[ids[i + 1]] + 'px'; });
+  let scrolled = 0;
+  const show = (id, t, me) => {
+    const bottom = top[id] + $(id).offsetHeight + 34;
+    const need = Math.max(0, bottom - AREA);
+    if (need > scrolled) { A('inner', [{ transform: `translateY(${-scrolled}px)` }, { transform: `translateY(${-need}px)` }], t - 0.05, 0.45, 'out', { fill: 'forwards' }); scrolled = need; }
+    A(id, [{ opacity: 0, transform: `translateY(40px) scale(.9)`, transformOrigin: me ? '100% 100%' : '0% 100%' }, { opacity: 1, transform: 'none', transformOrigin: me ? '100% 100%' : '0% 100%' }], t, 0.45, 'back');
+    sfx('msg', t, { pan: me ? 0.4 : -0.4 });
+  };
+  const typing = (id, t0, t1) => {
+    A(id, [{ opacity: 0, transform: 'scale(.6)' }, { opacity: 1, transform: 'none' }], t0, 0.3, 'back');
+    A(id, [{ opacity: 1 }, { opacity: 0 }], t1 - 0.12, 0.12, 'lin', { fill: 'forwards', composite: 'replace' });
+    $(id).querySelectorAll('i').forEach((d, k) => A(d, [{ transform: 'translateY(0)' }, { transform: 'translateY(-12px)' }], t0 + k * 0.12, 0.3, 'io', { iterations: Math.ceil((t1 - t0) / 0.3), direction: 'alternate' }));
+    A('wr', [{ opacity: 0 }, { opacity: 1 }], t0, 0.15, 'lin', { fill: 'forwards' }); A('wr', [{ opacity: 1 }, { opacity: 0 }], t1, 0.15, 'lin', { fill: 'forwards' });
+    A('on', [{ opacity: 1 }, { opacity: 0 }], t0, 0.15, 'lin', { fill: 'forwards' }); A('on', [{ opacity: 0 }, { opacity: 1 }], t1, 0.15, 'lin', { fill: 'forwards' });
+  };
+  for (let i = 0; i < 4; i++) { lineIn('a' + i, S(i) + 0.1); lineIn('b' + i, S(i) + 0.25); }
+  A('panel', [{ opacity: 0, transform: 'translateY(160px) scale(.94)' }, { opacity: 1, transform: 'none' }], 0.3, 0.8, 'out'); sfx('whoosh', 0.45);
+  // S0 user message (typing sound first)
+  sfx('type', 0.75, { arg: 1.0, pan: 0.4 });
+  show('m1', V(0)[0] + 1.25, true);
+  // S1 bot
+  typing('ty2', S(1) + 0.1, S(1) + 0.9); show('m2', S(1) + 0.9, false);
+  // S2 bot + attachment
+  typing('ty3', S(2) + 0.1, S(2) + 0.8); show('m3', S(2) + 0.8, false); sfx('ding', S(2) + 1.6, { arg: 84 });
+  // S3 bot list
+  typing('ty4', S(3) + 0.1, S(3) + 0.7); show('m4', S(3) + 0.7, false);
+  const qs = [V(3)[0] + 0.6, V(3)[0] + 1.7, V(3)[1] - 0.6];
+  ['q1', 'q2', 'q3'].forEach((id, i) => pop(id, Math.max(qs[i], S(3) + 1.0 + i * 0.3), 0.5, { arg: 1100 + i * 200, pan: -0.4 }));
+  // S4 user reply then panel leaves -> CTA
+  show('m5', S(4) - 0.55, true);
+  A('panel', [{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(500px) scale(.9)' }], S(4) + 0.35, 0.5, 'in', { fill: 'forwards', composite: 'replace' });
+  const t4 = S(4);
+  lineIn('a4', t4 + 0.3); lineIn('b4', t4 + 0.45);
+  A('btn4', [{ opacity: 0, transform: 'translateY(80px) scale(.8)' }, { opacity: 1, transform: 'none' }], t4 + 0.8, 0.6, 'back'); sfx('pop', t4 + 0.85, { arg: 900 });
+  pulse('btn4', t4 + 1.4, 3, 1.045, 0.4);
+  A('sh4', [{ transform: 'translateX(0) skewX(-20deg)' }, { transform: 'translateX(1300px) skewX(-20deg)' }], t4 + 1.5, 0.8, 'io'); sfx('sparkle', t4 + 1.55);
+  A('c41', [{ opacity: 0, transform: 'translateX(-50%) scale(.3)' }, { opacity: 1, transform: 'translateX(-50%) scale(1)' }], t4 + 1.15, 0.55, 'back'); sfx('pop', t4 + 1.18, { arg: 1300 });
+  rise('disc4', t4 + 1.4, 0.5, 20);
+};
+</script>
+<script src="../engine.js"></script>
+</body></html>

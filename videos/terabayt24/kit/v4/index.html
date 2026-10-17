@@ -1,0 +1,177 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../base.css">
+<style>
+#rail{position:absolute;left:120px;right:120px;top:290px;height:90px;z-index:3}
+.node{position:absolute;top:0;width:90px;height:90px;border-radius:50%;border:4px solid rgba(255,255,255,.25);background:#05332b;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:42px;color:#9fc4b8}
+.nfill{position:absolute;inset:-4px;border-radius:50%;background:var(--g);color:#032b22;display:flex;align-items:center;justify-content:center}
+.rline{position:absolute;top:41px;height:8px;border-radius:4px;background:rgba(255,255,255,.15)}
+.rfill{position:absolute;inset:0;border-radius:4px;background:var(--g);transform-origin:left}
+.stepk{position:absolute;left:60px;top:440px;font-size:34px;font-weight:700;letter-spacing:6px;color:var(--g)}
+.giant{position:absolute;left:0;right:0;text-align:center;font-weight:900;font-size:620px;line-height:1;letter-spacing:-20px}
+.pcard{position:absolute;width:450px;height:330px;border-radius:40px;background:rgba(255,255,255,.06);border:3px solid rgba(255,255,255,.12);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;font-size:40px;font-weight:800}
+.pcard svg{stroke:#02f894}
+.sel{position:absolute;inset:-3px;border-radius:40px;border:6px solid var(--g);background:rgba(2,248,148,.12)}
+.cursor{position:absolute;width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,.95);box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.ripple{position:absolute;width:70px;height:70px;border-radius:50%;border:5px solid #fff}
+.passport{position:absolute;width:420px;height:580px;border-radius:30px;background:linear-gradient(160deg,#0b6b4b,#063f2e);box-shadow:0 40px 80px rgba(0,0,0,.5),inset 0 0 0 3px rgba(255,255,255,.08);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:30px;color:#cdebdc;font-weight:800;letter-spacing:6px;font-size:34px}
+.bank{position:absolute;width:600px;height:378px;border-radius:36px;background:linear-gradient(135deg,#1c2b27,#0a1311 60%,#123d31);box-shadow:0 40px 80px rgba(0,0,0,.5),inset 0 0 0 2px rgba(255,255,255,.1);color:#e9f5f0;padding:44px}
+.chipc{width:96px;height:72px;border-radius:14px;background:linear-gradient(135deg,#e9d9a4,#b99b4f)}
+.box{position:absolute;left:290px;width:500px;top:1180px;height:260px;border-radius:0 0 30px 30px;background:linear-gradient(180deg,#0e5a43,#08392b);box-shadow:0 40px 80px rgba(0,0,0,.5)}
+.flap{position:absolute;top:-6px;width:250px;height:30px;background:#11704f;border-radius:6px}
+.conf{position:absolute;width:16px;height:28px;border-radius:4px}
+.pin{position:absolute;display:flex;flex-direction:column;align-items:center;font-size:28px;font-weight:700;color:#e6efec;transform:translate(-50%,-100%)}
+.pin i{width:34px;height:34px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:var(--g);margin-bottom:12px;box-shadow:0 6px 14px rgba(0,0,0,.4)}
+.truck{position:absolute;left:0;top:0;width:110px;height:110px;border-radius:50%;background:var(--g);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 12px rgba(2,248,148,.18);offset-rotate:0deg}
+</style></head>
+<body><div id="stage">
+<canvas id="gl" width="1080" height="1920" style="position:absolute;left:0;top:0;width:1080px;height:1920px;z-index:1"></canvas>
+
+<div id="rail">
+  <div class="rline" style="left:90px;width:265px"><div class="rfill" id="rf1"></div></div>
+  <div class="rline" style="left:445px;width:265px"><div class="rfill" id="rf2"></div></div>
+  <div class="node" style="left:0">1<div class="nfill" id="nf1">1</div></div>
+  <div class="node" style="left:355px">2<div class="nfill" id="nf2">2</div></div>
+  <div class="node" style="left:710px">3<div class="nfill" id="nf3">3</div></div>
+</div>
+
+<div class="scene" id="s0" style="z-index:2">
+  <div class="abs title" style="left:0;right:0;top:330px;text-align:center;font-size:110px">
+    <span class="line"><span id="a0">Nasiya — atigi</span></span>
+  </div>
+  <div class="giant" id="g0" style="top:520px;-webkit-text-stroke:6px #02f894;color:transparent">3</div>
+  <div class="giant" id="g0f" style="top:520px;color:#02f894;clip-path:inset(100% 0 0 0)">3</div>
+  <div class="abs title green" id="q0" style="left:0;right:0;top:1150px;text-align:center;font-size:130px">qadam</div>
+</div>
+
+<div class="scene" id="s1" style="z-index:2">
+  <div class="stepk" id="k1">1-QADAM</div>
+  <div class="abs title" style="left:60px;top:500px;font-size:110px"><span class="line"><span id="a1">Qurilmani</span></span><span class="line"><span id="b1" class="green">tanlang</span></span></div>
+  <div class="pcard" id="p1" style="left:60px;top:780px"><svg width="90" height="90" viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="6.5" y="2" width="11" height="20" rx="2.6"/><path d="M10.5 4.5h3"/></svg>iPhone<div class="sel" id="sel1"></div></div>
+  <div class="pcard" id="p2" style="left:570px;top:780px"><svg width="90" height="90" viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M1 19h22"/></svg>MacBook</div>
+  <div class="pcard" id="p3" style="left:60px;top:1140px"><svg width="90" height="90" viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/></svg>iPad</div>
+  <div class="pcard" id="p4" style="left:570px;top:1140px"><svg width="90" height="90" viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><circle cx="12" cy="8" r="3"/><path d="M10 14h4v8h-4z"/></svg>Dyson</div>
+  <div class="ripple" id="rip1" style="left:380px;top:1010px"></div>
+  <div class="cursor" id="cur1" style="left:380px;top:1010px"></div>
+</div>
+
+<div class="scene" id="s2" style="z-index:2">
+  <div class="stepk" id="k2">2-QADAM</div>
+  <div class="abs title" style="left:60px;top:500px;font-size:110px"><span class="line"><span id="a2">Pasport</span></span><span class="line"><span id="b2" class="green">+ karta</span></span></div>
+  <div class="passport" id="pas" style="left:90px;top:800px">
+    <svg width="140" height="140" viewBox="0 0 24 24" fill="none" stroke="#cdebdc" stroke-width="1.2"><circle cx="12" cy="12" r="9"/><path d="M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18M3 12h18"/></svg>
+    PASPORT
+  </div>
+  <div class="bank" id="bank" style="left:420px;top:1000px">
+    <div style="display:flex;justify-content:space-between;align-items:center"><div class="chipc"></div><div style="font-weight:800;font-size:34px;letter-spacing:2px">UZCARD · HUMO</div></div>
+    <div style="font-size:40px;font-weight:600;letter-spacing:4px;margin-top:80px;white-space:nowrap">•••• •••• •••• 2424</div>
+  </div>
+  <div class="check" id="chk2" style="right:80px;top:960px;width:110px;height:110px;position:absolute"><svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#032b22" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+</div>
+
+<div class="scene" id="s3" style="z-index:2">
+  <div class="stepk" id="k3">3-QADAM</div>
+  <div class="abs title" style="left:60px;top:500px;font-size:110px"><span class="line"><span id="a3">Qurilma</span></span><span class="line"><span id="b3" class="green">qo‘lingizda!</span></span></div>
+  <div id="confs"></div>
+</div>
+<div class="box" id="box" style="z-index:3"><div class="flap" id="fl1" style="left:0;transform-origin:left"></div><div class="flap" id="fl2" style="right:0;transform-origin:right"></div>
+  <div style="position:absolute;left:0;right:0;top:95px;text-align:center;font-weight:800;font-size:38px;letter-spacing:6px;color:#9fe8c8">TERABAYT24</div></div>
+
+<div class="scene" id="s4" style="z-index:2">
+  <div class="abs title" style="left:60px;top:300px;font-size:104px">
+    <span class="line"><span id="a4">Butun O‘zbekiston</span></span>
+    <span class="line"><span id="b4" class="green">bo‘ylab yetkazamiz</span></span>
+  </div>
+  <svg class="abs" style="left:0;top:560px" width="1080" height="560" viewBox="0 0 1080 560">
+    <path id="road" d="M110 420 C 260 200, 380 470, 520 300 S 800 120, 960 230" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="14" stroke-linecap="round"/>
+    <path id="road2" d="M110 420 C 260 200, 380 470, 520 300 S 800 120, 960 230" fill="none" stroke="#02f894" stroke-width="6" stroke-dasharray="1" pathLength="1" stroke-linecap="round"/>
+  </svg>
+  <div class="pin" id="pin1" style="left:110px;top:980px"><i></i>Nukus</div>
+  <div class="pin" id="pin2" style="left:330px;top:900px"><i></i>Buxoro</div>
+  <div class="pin" id="pin3" style="left:520px;top:860px"><i></i>Samarqand</div>
+  <div class="pin" id="pin4" style="left:760px;top:740px"><i></i>Toshkent</div>
+  <div class="pin" id="pin5" style="left:960px;top:790px"><i></i>Andijon</div>
+  <div class="truck" id="truck" style="offset-path:path('M110 980 C 260 760, 380 1030, 520 860 S 800 680, 960 790')">
+    <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#032b22" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6h11v10h-11zM13.5 9.5h4l3 3.5V16h-7z"/><circle cx="6.5" cy="17.5" r="1.8"/><circle cx="16.5" cy="17.5" r="1.8"/></svg>
+  </div>
+  <div class="btn" id="btn4" style="left:140px;width:800px;top:1180px;height:140px;overflow:hidden">Ariza qoldiring
+    <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#032b22" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    <div class="shine" id="sh4" style="left:-200px"></div>
+  </div>
+  <div class="abs" id="disc4" style="left:0;right:0;top:1350px;text-align:center;font-size:27px;color:rgba(230,239,236,.6);font-weight:500">Yakuniy shartlar rasmiylashtirishda individual belgilanadi</div>
+</div>
+</div>
+
+<script>window.PILL = '3 QADAM'; window.USE3D = true;</script>
+<script type="importmap">{"imports":{"three":"../lib/three.module.js"}}</script>
+<script type="module" src="../phones.js"></script>
+<script>
+window.BUILD = ({ S, End, V, A, sfx, lineIn, pop, rise, slideX, fadeIn, pulse, float, $ }) => {
+  // rail
+  A('rail', [{ opacity: 0, transform: 'translateY(-30px)' }, { opacity: 1, transform: 'none' }], S(1) - 0.1, 0.5);
+  A('rail', [{ opacity: 1 }, { opacity: 0 }], End(3) - 0.3, 0.3, 'in', { fill: 'forwards', composite: 'replace' });
+  [1, 2, 3].forEach((k) => { pop('nf' + k, S(k) + 0.25, 0.5, { arg: 900 + k * 200 }); });
+  A('rf1', [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], S(2) - 0.05, 0.45); A('rf2', [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], S(3) - 0.05, 0.45);
+  // S0
+  lineIn('a0', 0.2);
+  A('g0', [{ opacity: 0, transform: 'scale(.4) rotate(-12deg)' }, { opacity: 1, transform: 'none' }], 0.5, 0.8, 'back'); sfx('impact', 0.55, { gain: 0.6 });
+  A('g0f', [{ clipPath: 'inset(100% 0 0 0)' }, { clipPath: 'inset(0% 0 0 0)' }], V(0)[1] - 1.5, 0.9, 'io'); sfx('swish', V(0)[1] - 1.45, { gain: 1.2 });
+  rise('q0', V(0)[1] - 1.2, 0.6, 50); sfx('slam', V(0)[1] - 1.15, { gain: 0.8 });
+  // S1
+  const t1 = S(1);
+  slideX('k1', t1 + 0.1); lineIn('a1', t1 + 0.15); lineIn('b1', t1 + 0.3);
+  ['p1', 'p2', 'p3', 'p4'].forEach((id, i) => { A(id, [{ opacity: 0, transform: 'translateY(60px) scale(.9)' }, { opacity: 1, transform: 'none' }], t1 + 0.4 + i * 0.1, 0.55); });
+  sfx('swish', t1 + 0.45);
+  const tap = V(1)[1] - 0.9;
+  A('cur1', [{ opacity: 0, transform: 'translate(560px,520px)' }, { opacity: 1, transform: 'translate(0,0)' }], tap - 0.8, 0.75, 'io');
+  A('cur1', [{ transform: 'scale(1)' }, { transform: 'scale(.75)' }], tap, 0.12, 'io', { iterations: 2, direction: 'alternate', composite: 'add' });
+  A('cur1', [{ opacity: 1 }, { opacity: 0 }], tap + 0.45, 0.3, 'io', { fill: 'forwards', composite: 'replace' });
+  A('rip1', [{ opacity: 0.9, transform: 'scale(.6)' }, { opacity: 0, transform: 'scale(3)' }], tap + 0.05, 0.6); sfx('click', tap, { arg: 2600, gain: 1.4 });
+  A('sel1', [{ opacity: 0 }, { opacity: 1 }], tap + 0.05, 0.2); sfx('ding', tap + 0.1, { arg: 84 });
+  A('p1', [{ transform: 'scale(1)' }, { transform: 'scale(1.05)' }], tap, 0.2, 'io', { iterations: 2, direction: 'alternate', composite: 'add' });
+  // S2
+  const t2 = S(2);
+  slideX('k2', t2 + 0.1); lineIn('a2', t2 + 0.15); lineIn('b2', t2 + 0.3);
+  A('pas', [{ opacity: 0, transform: 'translate(-500px,0) rotate(-25deg)' }, { opacity: 1, transform: 'rotate(-6deg)' }], t2 + 0.35, 0.8); sfx('whoosh', t2 + 0.5, { pan: -0.5 });
+  A('bank', [{ opacity: 0, transform: 'translate(600px,100px) rotate(25deg)' }, { opacity: 1, transform: 'rotate(5deg)' }], V(2)[0] + 0.9, 0.8); sfx('whoosh', V(2)[0] + 1.05, { pan: 0.5 });
+  pop('chk2', V(2)[1] - 0.45, 0.5); sfx('ding', V(2)[1] - 0.42, { arg: 88 });
+  // S3: box + phone + confetti
+  const t3 = S(3), up = V(3)[0] + 1.6;
+  slideX('k3', t3 + 0.1); lineIn('a3', t3 + 0.15); lineIn('b3', t3 + 0.3);
+  A('box', [{ opacity: 0, transform: 'translateY(300px)' }, { opacity: 1, transform: 'none' }], t3 + 0.2, 0.7, 'back');
+  A('box', [{ opacity: 1 }, { opacity: 0, transform: 'translateY(200px)' }], End(3) - 0.3, 0.3, 'in', { fill: 'forwards', composite: 'replace' });
+  sfx('impact', t3 + 0.45, { gain: 0.4, arg: 0.5 });
+  A('fl1', [{ transform: 'rotate(0)' }, { transform: 'rotate(-130deg)' }], up - 0.45, 0.4, 'out'); A('fl2', [{ transform: 'rotate(0)' }, { transform: 'rotate(130deg)' }], up - 0.4, 0.4, 'out'); sfx('swish', up - 0.4);
+  sfx('whoosh', up + 0.1); sfx('sparkle', up + 0.6);
+  let ch = ''; const cols = ['#02f894', '#ffffff', '#ffd166', '#3ee0a0', '#ff6b8b'];
+  for (let i = 0; i < 40; i++) ch += `<div class="conf" id="cf${i}" style="left:540px;top:1180px;background:${cols[i % 5]}"></div>`;
+  $('confs').innerHTML = ch;
+  for (let i = 0; i < 40; i++) {
+    const ang = (-160 + (i * 137) % 140) * Math.PI / 180, r = 380 + (i * 53) % 260;
+    A('cf' + i, [{ opacity: 1, transform: 'translate(0,0) rotate(0)' }, { opacity: 1, transform: `translate(${Math.cos(ang) * r}px,${Math.sin(ang) * r}px) rotate(${(i % 2 ? 1 : -1) * 400}deg)` }, { opacity: 0, transform: `translate(${Math.cos(ang) * r * 1.2}px,${Math.sin(ang) * r + 500}px) rotate(${(i % 2 ? 1 : -1) * 700}deg)` }], up + 0.5, 1.8, 'cubic-bezier(.2,.7,.4,1)');
+  }
+  sfx('pop', up + 0.5, { arg: 1700 }); sfx('pop', up + 0.56, { arg: 2000, pan: 0.4 }); sfx('pop', up + 0.62, { arg: 1500, pan: -0.4 });
+  // S4
+  const t4 = S(4);
+  lineIn('a4', t4 + 0.1); lineIn('b4', t4 + 0.25);
+  A('road', [{ opacity: 0 }, { opacity: 1 }], t4 + 0.3, 0.4);
+  A('road2', [{ strokeDashoffset: 1 }, { strokeDashoffset: 0 }], t4 + 0.5, 2.0, 'io');
+  ['pin1', 'pin2', 'pin3', 'pin4', 'pin5'].forEach((id, i) => { A(id, [{ opacity: 0, transform: 'translate(-50%,-160%)' }, { opacity: 1, transform: 'translate(-50%,-100%)' }], t4 + 0.6 + i * 0.4, 0.5, 'back'); sfx('pop', t4 + 0.63 + i * 0.4, { arg: 1000 + i * 150, pan: -0.8 + i * 0.4, gain: 0.7 }); });
+  A('truck', [{ offsetDistance: '0%', opacity: 0 }, { offsetDistance: '2%', opacity: 1, offset: 0.05 }, { offsetDistance: '100%', opacity: 1 }], t4 + 0.5, 2.0, 'io'); sfx('whoosh', t4 + 1.3, { pan: 0 });
+  A('btn4', [{ opacity: 0, transform: 'translateY(80px) scale(.8)' }, { opacity: 1, transform: 'none' }], t4 + 2.6, 0.7, 'back'); sfx('pop', t4 + 2.65, { arg: 900 });
+  pulse('btn4', t4 + 3.3, 4, 1.045, 0.45);
+  A('sh4', [{ transform: 'translateX(0) skewX(-20deg)' }, { transform: 'translateX(1300px) skewX(-20deg)' }], t4 + 3.4, 0.9, 'io'); sfx('sparkle', t4 + 3.45);
+  rise('disc4', t4 + 3.0, 0.6, 20);
+  // 3D phone out of the box
+  window.PHONE3D.setTracks({
+    p: { color: 'bordo', float: 1, keys: [
+      { t: up - 0.01, x: 540, y: 1380, s: 0.62, ry: 0, o: 0 },
+      { t: up, o: 1 },
+      { t: up + 0.9, y: 1030, s: 0.68, ry: 6.6, e: 'out' },
+      { t: End(3) - 0.3, ry: 6.4 },
+      { t: End(3), y: 700, o: 0 } ] },
+  });
+};
+</script>
+<script src="../engine.js"></script>
+</body></html>
