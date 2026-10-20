@@ -5,6 +5,7 @@ import { GLTFLoader } from './lib/GLTFLoader.js';
 import { DRACOLoader } from './lib/DRACOLoader.js';
 
 const PX = 448;
+const PLATEAU_SLOT = 3, PLATEAU_Y = '0.30';
 const KEEP = new Set(['zFdeDaGNRwzccye', 'ujsvqBWRMnqdwPx', 'hUlRcbieVuIiOXG', 'jlzuBkUzuJqgiAK', 'xNrofRCqOXXHVZt']);
 const canvas = document.getElementById('gl');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, preserveDrawingBuffer: true });
@@ -36,6 +37,24 @@ function makePhone(tint, model = 'iphone') {
   const box = new THREE.Box3().setFromObject(m), c = box.getCenter(new THREE.Vector3()), sz = box.getSize(new THREE.Vector3());
   const k = M.size / sz[M.axis]; m.position.copy(c).multiplyScalar(-k); m.scale.setScalar(k);
   const g = new THREE.Group(); g.add(m);
+  g.updateMatrixWorld(true);
+  // The camera plateau and the Apple logo share palette slot 3 (semi-transparent black "glass") of PaletteMaterial003.
+  // On a coloured phone that slot paints the plateau as a dark square, so repaint the slot with the body colour
+  // above the logo (phone-space y > PLATEAU_Y) and leave the logo itself black.
+  if (tint) m.traverse((o) => {
+    if (!o.isMesh || o.material.name !== 'PaletteMaterial003') return;
+    const toRoot = { value: o.matrixWorld.clone() };
+    o.material.onBeforeCompile = (sh) => {
+      sh.uniforms.toRoot = toRoot;
+      sh.vertexShader = 'uniform mat4 toRoot;\nvarying float vRootY;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\nvRootY = (toRoot * vec4(position, 1.0)).y;');
+      sh.fragmentShader = 'varying float vRootY;\n' + sh.fragmentShader.replace('#include <map_fragment>',
+        `#include <map_fragment>
+        #ifdef USE_MAP
+          if (floor(vMapUv.x * 16.0) == ${PLATEAU_SLOT}.0 && vRootY > ${PLATEAU_Y}) diffuseColor = vec4(diffuse * 0.82, 1.0);
+        #endif`);
+    };
+    o.material.customProgramCacheKey = () => 'plateau-fix';
+  });
   g.userData.mats = []; m.traverse((o) => { if (o.isMesh) g.userData.mats.push([o.material, o.material.opacity, o.material.transparent]); });
   return g;
 }
