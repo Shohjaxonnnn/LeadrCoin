@@ -48,7 +48,8 @@ def load(p, tempo):
 scenes = json.load(open(os.path.join(D, 'script.json')))['scenes']
 WHOLE = os.environ.get('WHOLE') == '1'
 if WHOLE:
-    STYLE = ''
+    if os.environ.get('NOSTYLE') == '1': STYLE = ''
+    else: STYLE = STYLE.replace('line', 'script').replace(':\n\n', '. Leave a clear pause of about one second between paragraphs.\n\n')
     full = load(tts('\n\n'.join(scenes)), 1.0)
     e = np.convolve(np.abs(full), np.ones(480) / 480, 'same'); quiet = e < 0.02 * e.max()
     gaps = []; i = 0
@@ -68,6 +69,7 @@ if WHOLE:
         cost = sum(abs(gaps[g][0] - x) / SR - 0.8 * gaps[g][1] for g, x in zip(combo, exp))
         if best is None or cost < best[0]: best = (cost, combo)
     cuts = [gaps[g][0] for g in best[1]]
+    if os.environ.get('CUTS'): cuts = [int(float(c) * SR) for c in os.environ['CUTS'].split(',')]
     print('gaps', [(round(g[0] / SR, 2), round(g[1], 2)) for g in gaps]); print('cuts', [round(c / SR, 2) for c in cuts], 'expected', np.round(exp / SR, 2))
     bounds = [0] + cuts + [len(full)]
     os.makedirs(os.path.join(D, 'parts'), exist_ok=True); paths = []
