@@ -1,0 +1,7 @@
+{"scenes": [
+ "Yangi iPhone uchun pul yig‘yapsizmi?",
+ "Bir yil kutish — o‘n ikki oy orzu bilan yashash degani.",
+ "Terabayt yigirma to‘rtda esa kutish shart emas!",
+ "Qurilmani bugun olasiz, to‘lovni esa oyma-oy, foizsiz qilasiz.",
+ "Kutmang — bugun oling! Terabayt yigirma to‘rt."],
+ "music": {"chords": ["Am", "F", "Dm", "E"], "drop_chords": ["F", "G", "C", "Am"], "seed": 71, "bpm": 118, "half_intro": true}}

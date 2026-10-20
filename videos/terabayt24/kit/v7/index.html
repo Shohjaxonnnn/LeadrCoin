@@ -1,0 +1,161 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<link rel="stylesheet" href="../base.css">
+<style>
+.save{position:absolute;left:60px;width:960px;border-radius:40px;background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);padding:34px 40px}
+.save .lbl{display:flex;justify-content:space-between;font-size:34px;font-weight:600;color:#cfe5dd}
+.save .lbl b{color:var(--g);font-weight:800}
+.track{position:relative;height:30px;border-radius:15px;background:rgba(255,255,255,.08);margin-top:22px;overflow:hidden}
+.fillb{position:absolute;left:0;top:0;bottom:0;width:100%;border-radius:15px;background:linear-gradient(90deg,#03995c,#02f894);transform-origin:left}
+.cal{position:absolute;left:240px;width:600px;height:560px;border-radius:44px;background:#fbfcff;box-shadow:0 40px 90px rgba(0,0,0,.5);overflow:hidden;color:#14181d}
+.calh{height:130px;background:#ff4d6d;display:flex;align-items:center;justify-content:center;gap:120px}
+.ring{width:26px;height:70px;border-radius:13px;background:#14181d;margin-top:-80px}
+.mon{position:absolute;left:0;right:0;top:170px;text-align:center;font-size:118px;font-weight:900;letter-spacing:-3px}
+.monn{position:absolute;left:0;right:0;top:320px;text-align:center;font-size:40px;font-weight:700;color:#7d8a86}
+.wait{position:absolute;left:0;right:0;bottom:44px;text-align:center;font-size:34px;font-weight:800;color:#ff4d6d;letter-spacing:4px}
+.shard{position:absolute;background:#fbfcff;border-radius:10px}
+.today{position:absolute;padding:16px 34px;border-radius:999px;background:var(--g);color:#032b22;font-weight:900;font-size:40px;letter-spacing:4px;box-shadow:0 0 0 12px rgba(2,248,148,.15)}
+.mcell{position:absolute;width:150px;height:96px;border-radius:24px;background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.12);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:#9fc4b8}
+.mcell b{font-size:34px;color:#e6efec}
+</style></head>
+<body><div id="stage">
+<canvas id="gl" width="1080" height="1920" style="position:absolute;left:0;top:0;width:1080px;height:1920px;z-index:1"></canvas>
+
+<div class="scene" id="s0" style="z-index:2">
+  <div class="abs title" style="left:60px;top:300px;font-size:118px">
+    <span class="line"><span id="a0">Pul</span></span>
+    <span class="line"><span id="b0" class="green">yig‘yapsizmi?</span></span>
+  </div>
+  <div class="save" id="sv0" style="top:1230px">
+    <div class="lbl"><span>Maqsad: yangi iPhone</span><span>Yig‘ildi: <b id="pct">0%</b></span></div>
+    <div class="track"><div class="fillb" id="fb0"></div></div>
+  </div>
+</div>
+
+<div class="scene" id="s1" style="z-index:2">
+  <div class="abs title" style="left:60px;top:300px;font-size:118px">
+    <span class="line"><span id="a1">12 oy</span></span>
+    <span class="line"><span id="b1" style="color:#ff6b8b">kutasizmi?</span></span>
+  </div>
+  <div class="cal" id="cal" style="top:640px">
+    <div class="calh"><div class="ring"></div><div class="ring"></div></div>
+    <div class="mon" id="mon">Yanvar</div>
+    <div class="monn" id="monn">1 / 12 oy</div>
+    <div class="wait">KUTISH…</div>
+  </div>
+  <div id="shards"></div>
+</div>
+
+<div class="scene" id="s2" style="z-index:2">
+  <div class="abs title" style="left:60px;top:300px;font-size:124px">
+    <span class="line"><span id="a2">Kutish</span></span>
+    <span class="line"><span id="b2" class="green">shart emas!</span></span>
+  </div>
+  <div class="today" id="td2" style="left:50%;top:1430px;transform:translateX(-50%)">TERABAYT24</div>
+</div>
+
+<div class="scene" id="s3" style="z-index:2">
+  <div class="abs title" style="left:60px;top:300px;font-size:112px">
+    <span class="line"><span id="a3">Bugun oling,</span></span>
+    <span class="line"><span id="b3" class="green">oyma-oy to‘lang</span></span>
+  </div>
+  <div class="today" id="td3" style="left:60px;top:640px">BUGUN</div>
+  <div id="cells"></div>
+  <div class="chip" id="c31" style="left:60px;top:1330px"><b>0%</b> foiz</div>
+  <div class="chip" id="c32" style="left:350px;top:1330px"><b>0 so‘m</b> boshlang‘ich</div>
+</div>
+
+<div class="scene" id="s4" style="z-index:2">
+  <div class="abs title" style="left:0;right:0;top:300px;text-align:center;font-size:120px">
+    <span class="line"><span id="a4">Kutmang —</span></span>
+    <span class="line"><span id="b4" class="green">bugun oling!</span></span>
+  </div>
+  <div class="btn" id="btn4" style="left:140px;width:800px;top:1330px;height:140px;overflow:hidden">Ariza qoldiring
+    <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#032b22" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    <div class="shine" id="sh4" style="left:-200px"></div>
+  </div>
+  <div class="abs" id="disc4" style="left:0;right:0;top:1500px;text-align:center;font-size:27px;color:rgba(230,239,236,.6);font-weight:500">Yakuniy shartlar rasmiylashtirishda individual belgilanadi</div>
+</div>
+</div>
+
+<script>window.PILL = 'BUGUN OLING'; window.USE3D = true;</script>
+<script type="importmap">{"imports":{"three":"../lib/three.module.js"}}</script>
+<script type="module" src="../phones.js"></script>
+<script>
+window.BUILD = ({ S, End, V, A, sfx, lineIn, pop, rise, slideX, fadeIn, pulse, float, $, hook }) => {
+  const clamp = (x) => Math.max(0, Math.min(1, x));
+  // S0: savings bar crawls 0 -> 8%
+  lineIn('a0', 0.2); lineIn('b0', 0.35);
+  rise('sv0', 0.6, 0.7, 60); sfx('swish', 0.65);
+  A('fb0', [{ transform: 'scaleX(0)' }, { transform: 'scaleX(.08)' }], 0.9, End(0) - 1.2, 'out');
+  hook((t) => { $('pct').textContent = Math.round(8 * (1 - Math.pow(1 - clamp((t - 0.9) / (End(0) - 1.2)), 3))) + '%'; });
+  for (let i = 0; i < 4; i++) sfx('click', 1.0 + i * 0.35, { arg: 2600, gain: 0.6 });
+
+  // S1: calendar flips through 12 months
+  const t1 = S(1), MONTHS = ['Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun', 'Iyul', 'Avgust', 'Sentabr', 'Oktabr', 'Noyabr', 'Dekabr'];
+  lineIn('a1', t1 + 0.1); lineIn('b1', t1 + 0.25);
+  A('cal', [{ opacity: 0, transform: 'translateY(120px) rotate(-6deg) scale(.9)' }, { opacity: 1, transform: 'rotate(-3deg)' }], t1 + 0.2, 0.7, 'back'); sfx('whoosh', t1 + 0.3);
+  const f0 = t1 + 0.8, f1 = End(1) - 0.45, step = (f1 - f0) / 11;
+  for (let i = 1; i < 12; i++) {
+    A('mon', [{ transform: 'translateY(0)', opacity: 1 }, { transform: 'translateY(-40px)', opacity: 0, offset: 0.45 }, { transform: 'translateY(40px)', opacity: 0, offset: 0.5 }, { transform: 'translateY(0)', opacity: 1 }], f0 + (i - 1) * step, Math.min(0.24, step), 'lin', { fill: 'none' });
+    sfx('click', f0 + (i - 1) * step + 0.1, { arg: 3200 - i * 60, gain: 0.9 });
+  }
+  hook((t) => { const k = t < f0 + 0.12 ? 0 : Math.min(11, Math.floor((t - f0 - 0.12) / step) + 1); $('mon').textContent = MONTHS[k]; $('monn').textContent = `${k + 1} / 12 oy`; });
+  // calendar shatters at the cut
+  let sh = ''; for (let i = 0; i < 16; i++) sh += `<div class="shard" id="sd${i}" style="left:${240 + (i % 4) * 150}px;top:${640 + Math.floor(i / 4) * 140}px;width:150px;height:140px;opacity:0"></div>`;
+  $('shards').innerHTML = sh;
+  const br = End(1) - 0.32;
+  A('cal', [{ opacity: 1 }, { opacity: 0 }], br, 0.05, 'lin', { fill: 'forwards', composite: 'replace' });
+  for (let i = 0; i < 16; i++) {
+    const dx = ((i % 4) - 1.5) * 260 + (i * 37 % 80), dy = (Math.floor(i / 4) - 1.5) * 220 - 200 + (i * 53 % 120), r = (i % 2 ? 1 : -1) * (90 + i * 23);
+    A('sd' + i, [{ opacity: 1, transform: 'rotate(-3deg)' }, { opacity: 0, transform: `translate(${dx}px,${dy + 500}px) rotate(${r}deg) scale(.6)` }], br, 0.9, 'cubic-bezier(.2,.6,.4,1)', { fill: 'forwards' });
+  }
+  sfx('slam', br + 0.05, { gain: 1.2 }); sfx('impact', br + 0.05, { gain: 0.8, arg: 1.0 });
+
+  // S2: phone comes close, "TERABAYT24" tag
+  const t2 = S(2);
+  lineIn('a2', t2 + 0.1); lineIn('b2', t2 + 0.25); sfx('whoosh', t2 + 0.25, { gain: 1.2 });
+  A('td2', [{ opacity: 0, transform: 'translateX(-50%) scale(.3)' }, { opacity: 1, transform: 'translateX(-50%) scale(1)' }], V(2)[0] + 1.0, 0.6, 'back'); sfx('ding', V(2)[0] + 1.05, { arg: 88 });
+  sfx('sparkle', t2 + 1.0);
+
+  // S3: BUGUN + 12 monthly cells ticking
+  const t3 = S(3);
+  lineIn('a3', t3 + 0.1); lineIn('b3', t3 + 0.25);
+  pop('td3', t3 + 0.5, 0.6, { arg: 1500 });
+  let ch = ''; for (let i = 0; i < 12; i++) ch += `<div class="mcell" id="mc${i}" style="left:${470 + (i % 3) * 180}px;top:${640 + Math.floor(i / 3) * 140}px"><b>${i + 1}</b>oy</div>`;
+  $('cells').innerHTML = ch;
+  const c0 = t3 + 1.0, cd = Math.min(0.2, (V(3)[1] - 0.9 - c0) / 12);
+  for (let i = 0; i < 12; i++) {
+    A('mc' + i, [{ opacity: 0, transform: 'scale(.6)' }, { opacity: 1, transform: 'none' }], t3 + 0.6 + i * 0.03, 0.4, 'back');
+    A('mc' + i, [{ background: 'rgba(255,255,255,.07)', borderColor: 'rgba(255,255,255,.12)' }, { background: 'rgba(2,248,148,.22)', borderColor: '#02f894' }], c0 + i * cd, 0.15, 'out', { composite: 'replace' });
+    sfx('click', c0 + i * cd, { arg: 2300 + i * 100, gain: 0.8 });
+  }
+  pop('c31', V(3)[1] - 0.8, 0.6, { arg: 1200, pan: -0.4 }); pop('c32', V(3)[1] - 0.5, 0.6, { arg: 1450, pan: 0.4 });
+
+  // S4 CTA
+  const t4 = S(4);
+  lineIn('a4', t4 + 0.1); lineIn('b4', t4 + 0.25);
+  A('btn4', [{ opacity: 0, transform: 'translateY(80px) scale(.8)' }, { opacity: 1, transform: 'none' }], t4 + 1.3, 0.7, 'back'); sfx('pop', t4 + 1.35, { arg: 900 });
+  pulse('btn4', t4 + 2.0, 4, 1.045, 0.45);
+  A('sh4', [{ transform: 'translateX(0) skewX(-20deg)' }, { transform: 'translateX(1300px) skewX(-20deg)' }], t4 + 2.1, 0.9, 'io'); sfx('sparkle', t4 + 2.15);
+  rise('disc4', t4 + 1.7, 0.6, 20);
+
+  // 3D iPhone: hero -> far & dim while waiting -> rushes close -> left of cells -> centre CTA
+  window.PHONE3D.setTracks({
+    p: { color: 'bordo', keys: [
+      { t: 0.25, x: 540, y: 1650, s: 0.85, ry: 6.6, o: 0 },
+      { t: 1.2, y: 880, o: 1, ry: 0.3, e: 'out' },
+      { t: End(0) - 0.1, y: 880, ry: 0.15 },
+      { t: S(1) + 0.6, x: 880, y: 560, s: 0.32, ry: -0.4, o: 0.35 },
+      { t: End(1) - 0.35, x: 880, y: 560, s: 0.3, o: 0.3 },
+      { t: S(2) + 0.6, x: 540, y: 1010, s: 1.05, ry: 6.5, o: 1, e: 'out' },
+      { t: End(2) - 0.2, y: 1000, ry: 6.35 },
+      { t: S(3) + 0.6, x: 250, y: 1010, s: 0.62, ry: 6.6, e: 'out' },
+      { t: End(3) - 0.2, x: 250, ry: 6.45 },
+      { t: S(4) + 0.8, x: 540, y: 880, s: 0.8, ry: 12.9, e: 'out' },
+      { t: End(4), ry: 12.7 } ] },
+  });
+};
+</script>
+<script src="../engine.js"></script>
+</body></html>
