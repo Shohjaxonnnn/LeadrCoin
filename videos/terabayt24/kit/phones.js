@@ -90,12 +90,14 @@ window.PHONE3D = {
 };
 window.render3d = (t) => {
   for (const ph of phones) {
-    const k = sample(ph.keys, t), g = ph.g;
+    const k = Object.assign({}, sample(ph.keys, t)), g = ph.g;
     const fl = ph.float * Math.min(1, Math.max(0, t - ph.keys[0].t - 0.8));
     g.position.set((k.x - 540) / PX, (960 - k.y) / PX + 0.03 * Math.sin(t * 2.2 + ph.phase) * fl, k.z);
     g.rotation.set(k.rx + 0.04 * Math.sin(t * 1.6 + ph.phase) * fl, k.ry + 0.06 * Math.sin(t * 1.2 + ph.phase) * fl, k.rz);
     g.scale.setScalar(0.9 * k.s);
     g.visible = k.o > 0.01;
+    // single phone: fade the whole 3D layer instead of the materials (material transparency exposes the model's dark inner glass layer)
+    if (phones.length === 1) { canvas.style.opacity = k.o.toFixed(3); k.o = k.o > 0.01 ? 1 : 0; }
     const fade = k.o < 0.999;
     if (fade !== g.userData.fade) { for (const [m, , tr0] of g.userData.mats) { m.transparent = fade || tr0; m.needsUpdate = true; } g.userData.fade = fade; }
     for (const [m, o0] of g.userData.mats) m.opacity = o0 * k.o;
