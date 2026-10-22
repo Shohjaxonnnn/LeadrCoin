@@ -88,20 +88,56 @@ window.PHONE3D = {
     });
   },
 };
+// Fading: never touch the model's materials (switching them to transparent rendering exposes the model's
+// inner dark glass layers). Each device is rendered fully opaque into its own render target, and the finished
+// image is then composited onto the canvas with the fade opacity (premultiplied alpha).
+const quadCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+const quadScene = new THREE.Scene();
+const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.ShaderMaterial({
+  uniforms: { map: { value: null }, fade: { value: 1 }, exposure: { value: 1.05 } },
+  vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }',
+  fragmentShader: `
+    uniform sampler2D map; uniform float fade; uniform float exposure; varying vec2 vUv;
+    // three.js ACESFilmicToneMapping
+    vec3 tbRRTFit(vec3 v){ vec3 a = v*(v+0.0245786)-0.000090537; vec3 b = v*(0.983729*v+0.4329510)+0.238081; return a/b; }
+    vec3 tbAces(vec3 color){
+      const mat3 tbIn = mat3(vec3(0.59719,0.07600,0.02840), vec3(0.35458,0.90834,0.13383), vec3(0.04823,0.01566,0.83777));
+      const mat3 tbOut = mat3(vec3(1.60475,-0.10208,-0.00327), vec3(-0.53108,1.10813,-0.07276), vec3(-0.07367,-0.00605,1.07602));
+      color *= exposure / 0.6; color = tbIn * color; color = tbRRTFit(color); color = tbOut * color; return clamp(color, 0.0, 1.0);
+    }
+    vec3 tbSRGB(vec3 c){ return mix(c * 12.92, pow(c, vec3(0.41666)) * 1.055 - 0.055, step(0.0031308, c)); }
+    void main(){
+      vec4 c = texture2D(map, vUv);
+      if (c.a <= 0.0001) discard;
+      vec3 rgb = tbSRGB(tbAces(c.rgb / c.a));
+      float a = c.a * fade;
+      gl_FragColor = vec4(rgb * a, a);
+    }`,
+  transparent: true, depthTest: false, depthWrite: false,
+  blending: THREE.CustomBlending, blendSrc: THREE.OneFactor, blendDst: THREE.OneMinusSrcAlphaFactor,
+  blendSrcAlpha: THREE.OneFactor, blendDstAlpha: THREE.OneMinusSrcAlphaFactor }));
+quadScene.add(quad);
+const RT = () => new THREE.WebGLRenderTarget(1080, 1920, { samples: 4, type: THREE.HalfFloatType });
+
 window.render3d = (t) => {
-  for (const ph of phones) {
-    const k = Object.assign({}, sample(ph.keys, t)), g = ph.g;
+  const states = phones.map((ph) => {
+    const k = sample(ph.keys, t), g = ph.g;
     const fl = ph.float * Math.min(1, Math.max(0, t - ph.keys[0].t - 0.8));
     g.position.set((k.x - 540) / PX, (960 - k.y) / PX + 0.03 * Math.sin(t * 2.2 + ph.phase) * fl, k.z);
     g.rotation.set(k.rx + 0.04 * Math.sin(t * 1.6 + ph.phase) * fl, k.ry + 0.06 * Math.sin(t * 1.2 + ph.phase) * fl, k.rz);
     g.scale.setScalar(0.9 * k.s);
-    g.visible = k.o > 0.01;
-    // single phone: fade the whole 3D layer instead of the materials (material transparency exposes the model's dark inner glass layer)
-    if (phones.length === 1) { canvas.style.opacity = k.o.toFixed(3); k.o = k.o > 0.01 ? 1 : 0; }
-    const fade = k.o < 0.999;
-    if (fade !== g.userData.fade) { for (const [m, , tr0] of g.userData.mats) { m.transparent = fade || tr0; m.needsUpdate = true; } g.userData.fade = fade; }
-    for (const [m, o0] of g.userData.mats) m.opacity = o0 * k.o;
-  }
-  renderer.render(scene, cam);
+    return Math.max(0, Math.min(1, k.o));
+  });
+  renderer.setRenderTarget(null); renderer.setClearColor(0x000000, 0); renderer.clear();
+  phones.forEach((ph, i) => {
+    if (states[i] <= 0.01) return;
+    ph.rt = ph.rt || RT();
+    phones.forEach((q, j) => { q.g.visible = i === j; });
+    // linear HDR render of this device alone, fully opaque
+    renderer.setRenderTarget(ph.rt); renderer.clear(); renderer.render(scene, cam); renderer.setRenderTarget(null);
+    // composite: tone map + sRGB, then apply the fade as premultiplied opacity
+    quad.material.uniforms.map.value = ph.rt.texture; quad.material.uniforms.fade.value = states[i];
+    renderer.autoClear = false; renderer.render(quadScene, quadCam); renderer.autoClear = true;
+  });
 };
 window.WAIT3D = ready;
