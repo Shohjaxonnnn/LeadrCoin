@@ -66,19 +66,14 @@ body{font-family:var(--font);color:var(--white);font-variation-settings:'opsz' 1
 
 /* ===== Chrome (constant) ===== */
 #chrome{position:absolute;inset:0;pointer-events:none}
-#brandtl{position:absolute;left:92px;top:137px;font-weight:500;font-size:34px;line-height:1.18}
-#pill{position:absolute;left:853px;top:106px;width:144px;height:56px;border:3px solid #fff;border-radius:30px;display:flex;align-items:center;justify-content:center}
 /* Orzu Mobile logo: ring-O with pill, "RZU", gradient bar + "Mobile" */
-#logo{position:absolute;right:61px;top:353px;width:316px}
-#logo .row1{display:flex;align-items:center;justify-content:flex-end;gap:6px;height:84px}
+#logo{position:absolute;left:61px;top:106px;width:316px}
+#logo .row1{display:flex;align-items:center;justify-content:flex-start;gap:6px;height:84px}
 #logo .rzu{font-weight:800;font-size:104px;line-height:1;letter-spacing:-.02em;font-variation-settings:'opsz' 12,'wdth' 100;margin-top:-2px}
 #logo .row2{display:flex;align-items:center;justify-content:space-between;margin-top:8px;padding-left:2px}
 #logo .bar{display:block;width:172px;height:32px;border-radius:16px;background:linear-gradient(90deg,#DCEBFD 0%,#8EC5FF 42%,#5BB0FF 70%,#3F93F2 100%);box-shadow:0 0 16px rgba(80,170,255,.55)}
 #logo .mob{font-family:Inter,'Helvetica Neue',Arial,sans-serif;font-weight:400;font-size:42px;line-height:1;letter-spacing:-.02em;font-variation-settings:normal;margin-right:2px}
 #disc{position:absolute;left:108px;width:864px;top:1806px;text-align:center;font-size:24px;font-weight:400;letter-spacing:.02em;color:rgba(255,255,255,.7);opacity:0}
-.hair{position:absolute;left:108px;width:864px;height:3px;background:linear-gradient(90deg,rgba(58,155,255,0),#4DB8FF 14%,#4DB8FF 86%,rgba(58,155,255,0));box-shadow:0 0 14px rgba(77,184,255,.7)}
-#hair1{top:1640px}#hair2{top:1775px;background:linear-gradient(90deg,rgba(35,130,255,0),#2a86ff 14%,#2a86ff 86%,rgba(35,130,255,0));box-shadow:0 0 14px rgba(42,134,255,.7)}
-.frow{position:absolute;left:108px;width:864px;top:1690px;height:70px;display:flex;align-items:center;justify-content:space-between;font-size:26px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.88)}
 
 /* ===== Phone ===== */
 .phone{position:absolute;width:300px;height:620px;transform-style:preserve-3d}
@@ -111,8 +106,6 @@ body{font-family:var(--font);color:var(--white);font-variation-settings:'opsz' 1
   <div id="flash"></div>
 
   <div id="chrome">
-    <div id="brandtl">Orzu<br>Mobile</div>
-    <div id="pill"><svg width="64" height="22" viewBox="0 0 64 22" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 11h58M50 2l10 9-10 9"/></svg></div>
     <div id="logo">
       <div class="row1">
         <svg width="116" height="80" viewBox="0 0 116 80"><defs><linearGradient id="pg1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9AD2FF"/><stop offset="1" stop-color="#4DA5FF"/></linearGradient></defs>
@@ -121,9 +114,6 @@ body{font-family:var(--font);color:var(--white);font-variation-settings:'opsz' 1
       </div>
       <div class="row2"><i class="bar"></i><span class="mob">Mobile</span></div>
     </div>
-    <div class="hair" id="hair1"></div>
-    <div class="frow" id="frow1"><span>Orzu Mobile</span><span>(50)510-51-07</span><span>(95)592-90-90</span></div>
-    <div class="hair" id="hair2"></div>
     <div id="disc">Yakuniy shartlar individual belgilanadi</div>
   </div>
 </div>
@@ -254,7 +244,7 @@ SC.forEach(s=>{ s.el = mk(s.id); });
 
 /* ---- S1: hook ---- */
 const s1 = SC[0].el; const a1 = el('div','art persp'); s1.appendChild(a1);
-const ph1 = mkPhone('p1', 360, 330, 1.05); a1.appendChild(ph1);
+const ph1 = mkPhone('p1', 390, 330, 1.05); a1.appendChild(ph1);
 const ph1b = mkPhone('p1b', 160, 600, .55); ph1b.style.opacity=.0; a1.appendChild(ph1b);
 const d1 = el('div','disc',null,{left:'190px',top:'360px',width:'700px',height:'700px'}); a1.appendChild(d1);
 const b1 = makeBlock(s1,{hl:'NASIYA', label:'yashirin to‘lovlar bormi?', maxW:900});
@@ -293,7 +283,7 @@ const b6=makeBlock(s6,{hl:'PASPORT + KARTA', label:'faqat ikkita hujjat — shu 
 /* ---- S7: bonus kit ---- */
 const s7=SC[6].el; const a7=el('div','art persp'); s7.appendChild(a7);
 const d7=el('div','disc',null,{left:'130px',top:'360px',width:'820px',height:'820px'});
-const ph7=mkPhone('p7', 370, 380, .98);
+const ph7=mkPhone('p7', 390, 380, .98);
 /* case */
 const caseEl=el('div','glowsvg',`<svg viewBox="0 0 220 420" width="220" height="420"><rect x="4" y="4" width="212" height="412" rx="44" fill="rgba(34,153,245,.28)" stroke="#8fd3ff" stroke-width="6"/><rect x="22" y="22" width="92" height="92" rx="24" fill="none" stroke="#8fd3ff" stroke-width="5"/><circle cx="110" cy="320" r="26" fill="none" stroke="#8fd3ff" stroke-width="5"/></svg>`,{position:'absolute',left:'110px',top:'560px'});
 /* screen protector */
@@ -309,7 +299,7 @@ const b7=makeBlock(s7,{hl:'SOVG‘A!', label:'har bir iPhone bilan', sub:'chexol
 /* ---- S8: CTA ---- */
 const s8=SC[7].el; const a8=el('div','art persp'); s8.appendChild(a8);
 const d8=el('div','disc',null,{left:'120px',top:'330px',width:'840px',height:'840px'});
-const ph8=mkPhone('p8', 350, 340, 1.1);
+const ph8=mkPhone('p8', 390, 340, 1.1);
 const spk=[]; for(let i=0;i<14;i++){ const a=el('div','abs',null,{left:'540px',top:'700px',width:(8+(i%3)*5)+'px',height:(8+(i%3)*5)+'px',borderRadius:'50%',background:i%2?'#fff':'#4DB8FF',boxShadow:'0 0 18px #4DB8FF'}); a8.appendChild(a); spk.push(a); }
 a8.append(d8,ph8);
 const b8=makeBlock(s8,{hl:'ORZU MOBILE', label:'ariza qoldiring →', sub:'halol nasiya · butun O‘zbekistonga yetkazamiz', maxW:940, maxFont:230, subFs:42});
