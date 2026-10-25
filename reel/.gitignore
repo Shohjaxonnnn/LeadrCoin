@@ -4,3 +4,4 @@ out/render.log
 out/video-music.mp4
 out/samples.log
 out/voice-samples/*.wav
+__pycache__/
