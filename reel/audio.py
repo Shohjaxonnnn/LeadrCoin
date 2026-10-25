@@ -1,18 +1,22 @@
 """Synthesised soundtrack for the reel: 120 bpm beat, bass, pad, whooshes and impacts
 locked to the scene cuts in index.html. No samples, no external assets."""
-import sys, wave
+import json, sys, wave
 import numpy as np
 
+# one source of truth for timing, written by plan.py and also used by index.html / mix.py
+T = json.loads(open('timing.js').read().split('=', 1)[1].strip().rstrip(';'))
+SCN = T['scenes']
+
 SR = 48000
-DUR = 20.0
+DUR = float(T['duration'])
 N = int(SR * DUR)
 BPM = 120.0
 BEAT = 60.0 / BPM
 rng = np.random.default_rng(7)
 
-# scene starts / headline hits (keep in sync with index.html)
-CUTS = [2.5, 5.0, 7.0, 9.0, 11.0, 14.0, 17.0]
-HITS = [0.35, 3.28, 5.78, 7.78, 9.78, 11.3, 14.3, 17.5]   # headline slam moments
+# scene cuts and headline slam moments, straight from the plan
+CUTS = [x['t0'] for x in SCN[1:]]
+HITS = [SCN[0]['vs'] - 0.05] + [x['slam'] for x in SCN[1:5]] + [SCN[5]['vs'] + 0.4, SCN[6]['vs'], SCN[7]['vs']]
 
 L = np.zeros(N); R = np.zeros(N)
 
@@ -100,7 +104,7 @@ since = np.mod(tt, BEAT)
 duck = np.clip(since / 0.22, 0, 1) ** 1.6                    # pumps after each kick
 roots = [55.0, 55.0, 43.65, 49.0]                              # A1 A1 F1 G1  (per bar)
 chords = [(220.0, 261.63, 329.63), (220.0, 261.63, 329.63), (174.61, 220.0, 261.63), (196.0, 246.94, 293.66)]
-bar = np.minimum((tt // (BEAT * 4)).astype(int), 9) % 4
+bar = (tt // (BEAT * 4)).astype(int) % 4
 f_bass = np.array(roots)[bar]
 ph = 2 * np.pi * np.cumsum(f_bass) / SR
 bass = (np.sin(ph) + 0.35 * np.sin(2 * ph) + 0.12 * np.sin(3 * ph)) * 0.55 * duck
@@ -129,7 +133,7 @@ for c in CUTS:
 for h in HITS:
     both(h, P, 0.32)
     both(h, impact(0.6), 0.28)
-both(17.0 - 1.6, riser(1.6), 0.42)
+both(SCN[7]['t0'] - 1.6, riser(1.6), 0.42)
 both(0.0, impact(1.4), 0.5)
 
 # ---------- master ----------

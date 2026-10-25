@@ -128,6 +128,7 @@ body{font-family:var(--font);color:var(--white);font-variation-settings:'opsz' 1
   </div>
 </div>
 
+<script src="timing.js"></script>
 <script src="node_modules/gsap/dist/gsap.min.js"></script>
 <script>
 /* =====================================================================
@@ -140,7 +141,8 @@ await Promise.all([
   document.fonts.load("500 40px Bricolage"), document.fonts.load("400 40px Bricolage"),
 ]);
 await document.fonts.ready;
-const DURATION = 20;
+const T = window.TIMING;            // written by plan.py: cuts, voice starts, slam moments
+const DURATION = T.duration;
 const W = 1080;
 const $ = (s, r=document) => r.querySelector(s);
 const el = (tag, cls, html, st) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html!=null) e.innerHTML = html; if (st) Object.assign(e.style, st); return e; };
@@ -247,16 +249,7 @@ function makeBlock(scene, o){
 const scenesRoot = $('#scenes');
 const mk = (id)=>{ const s=el('div','sc'); s.id=id; scenesRoot.appendChild(s); return s; };
 
-const SC = [
-  { id:'s1', t0:0,  t1:2.5 },
-  { id:'s2', t0:2.5,t1:5.0 },
-  { id:'s3', t0:5.0,t1:7.0 },
-  { id:'s4', t0:7.0,t1:9.0 },
-  { id:'s5', t0:9.0,t1:11.0 },
-  { id:'s6', t0:11.0,t1:14.0 },
-  { id:'s7', t0:14.0,t1:17.0 },
-  { id:'s8', t0:17.0,t1:20.0 },
-];
+const SC = T.scenes.map(x=>({...x}));
 SC.forEach(s=>{ s.el = mk(s.id); });
 
 /* ---- S1: hook ---- */
@@ -344,84 +337,82 @@ SC.forEach((s,i)=>{
 });
 tl.set(SC[0].el,{autoAlpha:1},0);
 
-/* helper: text block in */
+/* helper: text block in. opts.labelAt / opts.subAt are absolute times (default: shortly after the headline) */
 function blockIn(b, t, opts={}){
   const stg = opts.stagger ?? .045;
   tl.fromTo(b.chars,{yPercent:115,rotation:6,scale:.7,opacity:0},{yPercent:0,rotation:0,scale:1,opacity:1,duration:.5,ease:'back.out(2.2)',stagger:stg,transformOrigin:'50% 80%'}, t);
   tl.fromTo(b.hlg,{opacity:0},{opacity:.95,duration:.45,ease:'power2.out'}, t+.1);
   tl.fromTo(b.hlg,{scale:1},{scale:1.03,duration:.5,yoyo:true,repeat:3,ease:'sine.inOut',transformOrigin:'50% 50%'}, t+.5);
   if(b.labWrap){
-    tl.fromTo(b.lab,{xPercent:-105},{xPercent:0,duration:.38,ease:'expo.out'}, t+.28);
+    tl.fromTo(b.lab,{xPercent:-105},{xPercent:0,duration:.38,ease:'expo.out'}, opts.labelAt ?? t+.28);
   }
   if(b.gsub){
-    tl.fromTo(b.gsub,{opacity:0,y:30,scale:.94},{opacity:1,y:0,scale:1,duration:.5,ease:'power3.out'}, t+(b.labWrap?.5:.3));
+    tl.fromTo(b.gsub,{opacity:0,y:30,scale:.94},{opacity:1,y:0,scale:1,duration:.5,ease:'power3.out'}, opts.subAt ?? t+(b.labWrap?.5:.3));
   }
 }
 function blockOut(b, t){
   tl.to([b.wrap,b.labWrap,b.gsub].filter(Boolean),{opacity:0,y:-20,duration:.12,ease:'power1.in'}, t);
 }
 
-/* S1 */
+/* S1 — hook: "NASIYA — yashirin to‘lovlar bormi?" */
 {
-  const t=0;
-  tl.fromTo(ph1,{y:420,rotationY:-70,rotationZ:-24,scale:.6,opacity:0},{y:0,rotationY:-16,rotationZ:-10,scale:1.05,opacity:1,duration:1.0,ease:'expo.out'}, t+.05);
-  tl.to(ph1,{rotationY:22,rotationZ:9,y:-26,duration:2.1,ease:'sine.inOut'}, t+.5);
-  tl.fromTo(d1,{scale:.3,opacity:0},{scale:1,opacity:1,duration:.9,ease:'power3.out'}, t+.05);
-  blockIn(b1, t+.35);
+  const {t0, vs} = SC[0];
+  tl.fromTo(ph1,{y:420,rotationY:-70,rotationZ:-24,scale:.6,opacity:0},{y:0,rotationY:-16,rotationZ:-10,scale:1.05,opacity:1,duration:1.0,ease:'expo.out'}, t0+.05);
+  tl.to(ph1,{rotationY:22,rotationZ:9,y:-26,duration:2.4,ease:'sine.inOut'}, t0+.5);
+  tl.fromTo(d1,{scale:.3,opacity:0},{scale:1,opacity:1,duration:.9,ease:'power3.out'}, t0+.05);
+  blockIn(b1, vs-.05, {labelAt: vs+.85});                       // headline on "Nasiya", label on "yashirin to‘lovlar…"
 }
-/* S2..S5 */
+/* S2..S5 — question first (label), then "YO‘Q!" slams exactly on the spoken word */
 NO.forEach((o,i)=>{
-  const t=o.sc.t0;
-  tl.fromTo(o.disc,{scale:.2,opacity:0},{scale:1,opacity:1,duration:.5,ease:'power3.out'}, t);
-  tl.fromTo(o.icon_el,{scale:.2,rotation:-25,opacity:0},{scale:1,rotation:0,opacity:1,duration:.5,ease:'back.out(2.4)'}, t+.04);
-  tl.to(o.icon_el,{y:-16,duration:.9,yoyo:true,repeat:1,ease:'sine.inOut'}, t+.5);
-  tl.fromTo(o.chip,{x:-60,opacity:0},{x:0,opacity:1,duration:.4,ease:'power3.out'}, t+.08);
+  const {t0, vs, slam} = o.sc;
+  tl.fromTo(o.disc,{scale:.2,opacity:0},{scale:1,opacity:1,duration:.5,ease:'power3.out'}, t0);
+  tl.fromTo(o.icon_el,{scale:.2,rotation:-25,opacity:0},{scale:1,rotation:0,opacity:1,duration:.5,ease:'back.out(2.4)'}, t0+.04);
+  tl.to(o.icon_el,{y:-16,duration:1.0,yoyo:true,repeat:1,ease:'sine.inOut'}, t0+.5);
+  tl.fromTo(o.chip,{x:-60,opacity:0},{x:0,opacity:1,duration:.4,ease:'power3.out'}, t0+.08);
   const sl=o.strike.querySelector('.sl'), sl2=o.strike.querySelector('.sl2');
-  [sl,sl2].forEach(p=>{ const L=p.getTotalLength(); gsap.set(p,{strokeDasharray:L,strokeDashoffset:L}); tl.to(p,{strokeDashoffset:0,duration:.18,ease:'power3.in'}, t+.62); });
-  tl.fromTo(o.icon_el,{opacity:1},{opacity:.35,duration:.2}, t+.74);
-  tl.fromTo(o.strike,{scale:1.18},{scale:1,duration:.22,ease:'back.out(3)'}, t+.78);
-  // YO'Q slam
-  blockIn(o.blk, t+.78, {stagger:.06});
-  tl.fromTo(o.blk.wrap,{scale:1.35},{scale:1,duration:.22,ease:'power4.out',transformOrigin:'50% 70%'}, t+.78);
+  [sl,sl2].forEach(p=>{ const L=p.getTotalLength(); gsap.set(p,{strokeDasharray:L,strokeDashoffset:L}); tl.to(p,{strokeDashoffset:0,duration:.2,ease:'power3.in'}, slam-.2); });
+  tl.fromTo(o.icon_el,{opacity:1},{opacity:.35,duration:.2}, slam-.05);
+  tl.fromTo(o.strike,{scale:1.18},{scale:1,duration:.22,ease:'back.out(3)'}, slam);
+  blockIn(o.blk, slam, {stagger:.06, labelAt: vs});
+  tl.fromTo(o.blk.wrap,{scale:1.35},{scale:1,duration:.22,ease:'power4.out',transformOrigin:'50% 70%'}, slam);
 });
-/* S6 */
+/* S6 — "Faqat pasport va karta kerak." */
 {
-  const t=SC[5].t0;
-  tl.fromTo(d6,{scale:.2,opacity:0},{scale:1,opacity:1,duration:.6,ease:'power3.out'}, t);
-  tl.fromTo(pass,{x:-500,y:200,rotation:-40,opacity:0},{x:0,y:0,rotation:-9,opacity:1,duration:.7,ease:'expo.out'}, t+.05);
-  tl.fromTo(card,{x:600,y:300,rotation:35,opacity:0},{x:0,y:0,rotation:8,opacity:1,duration:.7,ease:'expo.out'}, t+.2);
-  tl.to(pass,{y:-14,rotation:-6,duration:1.2,yoyo:true,repeat:1,ease:'sine.inOut'}, t+.9);
-  tl.to(card,{y:12,rotation:5,duration:1.2,yoyo:true,repeat:1,ease:'sine.inOut'}, t+.9);
-  tl.fromTo(tag20,{scale:0,opacity:0},{scale:1,opacity:1,duration:.4,ease:'back.out(3)'}, t+1.5);
-  tl.fromTo(tag12,{scale:0,opacity:0},{scale:1,opacity:1,duration:.4,ease:'back.out(3)'}, t+1.7);
-  blockIn(b6, t+.3, {stagger:.03});
+  const {t0, vs} = SC[5];
+  tl.fromTo(d6,{scale:.2,opacity:0},{scale:1,opacity:1,duration:.6,ease:'power3.out'}, t0);
+  tl.fromTo(pass,{x:-500,y:200,rotation:-40,opacity:0},{x:0,y:0,rotation:-9,opacity:1,duration:.7,ease:'expo.out'}, vs+.1);
+  tl.fromTo(card,{x:600,y:300,rotation:35,opacity:0},{x:0,y:0,rotation:8,opacity:1,duration:.7,ease:'expo.out'}, vs+.7);
+  tl.to(pass,{y:-14,rotation:-6,duration:1.4,yoyo:true,repeat:1,ease:'sine.inOut'}, vs+.9);
+  tl.to(card,{y:12,rotation:5,duration:1.4,yoyo:true,repeat:1,ease:'sine.inOut'}, vs+1.4);
+  tl.fromTo(tag20,{scale:0,opacity:0},{scale:1,opacity:1,duration:.4,ease:'back.out(3)'}, vs+1.65);
+  tl.fromTo(tag12,{scale:0,opacity:0},{scale:1,opacity:1,duration:.4,ease:'back.out(3)'}, vs+1.9);
+  blockIn(b6, vs+.4, {stagger:.03, labelAt: vs+1.0});
 }
-/* S7 */
+/* S7 — "Sovg‘a! Har bir iPhone bilan chexol, oyna va zaryadka!" */
 {
-  const t=SC[6].t0;
-  tl.fromTo(d7,{scale:.2,opacity:0},{scale:1,opacity:1,duration:.6,ease:'power3.out'}, t);
-  tl.fromTo(ph7,{y:500,rotationY:-60,opacity:0},{y:0,rotationY:-14,opacity:1,duration:.8,ease:'expo.out'}, t+.05);
-  tl.to(ph7,{rotationY:16,y:-20,duration:2.4,ease:'sine.inOut'}, t+.6);
-  tl.fromTo(caseEl,{x:-500,rotation:-30,opacity:0},{x:0,rotation:-10,opacity:1,duration:.7,ease:'expo.out'}, t+.5);
-  tl.fromTo(glass,{x:500,rotation:30,opacity:0},{x:0,rotation:10,opacity:1,duration:.7,ease:'expo.out'}, t+.8);
-  tl.fromTo(charger,{y:400,scale:.3,opacity:0},{y:0,scale:.78,opacity:1,duration:.7,ease:'back.out(2)'}, t+1.1);
-  [caseEl,glass,charger].forEach((e,i)=> tl.to(e,{y:'-=16',duration:1.1,yoyo:true,repeat:1,ease:'sine.inOut'}, t+1.4+i*.1));
-  tl.fromTo(t7a,{scale:0},{scale:1,duration:.35,ease:'back.out(3)'}, t+.95);
-  tl.fromTo(t7b,{scale:0},{scale:1,duration:.35,ease:'back.out(3)'}, t+1.25);
-  blockIn(b7, t+.3);
+  const {t0, vs} = SC[6];
+  tl.fromTo(d7,{scale:.2,opacity:0},{scale:1,opacity:1,duration:.6,ease:'power3.out'}, t0);
+  tl.fromTo(ph7,{y:500,rotationY:-60,opacity:0},{y:0,rotationY:-14,opacity:1,duration:.8,ease:'expo.out'}, t0+.05);
+  tl.to(ph7,{rotationY:16,y:-20,duration:4.0,ease:'sine.inOut'}, t0+.6);
+  tl.fromTo(caseEl,{x:-500,rotation:-30,opacity:0},{x:0,rotation:-10,opacity:1,duration:.6,ease:'expo.out'}, vs+2.0);      // "chexol"
+  tl.fromTo(glass,{x:500,rotation:30,opacity:0},{x:0,rotation:10,opacity:1,duration:.6,ease:'expo.out'}, vs+2.7);          // "oyna"
+  tl.fromTo(charger,{y:400,scale:.3,opacity:0},{y:0,scale:.78,opacity:1,duration:.6,ease:'back.out(2)'}, vs+3.2);          // "zaryadka"
+  [caseEl,glass,charger].forEach((e,i)=> tl.to(e,{y:'-=16',duration:1.1,yoyo:true,repeat:1,ease:'sine.inOut'}, vs+2.6+i*.4));
+  tl.fromTo(t7a,{scale:0},{scale:1,duration:.35,ease:'back.out(3)'}, vs+2.35);
+  tl.fromTo(t7b,{scale:0},{scale:1,duration:.35,ease:'back.out(3)'}, vs+3.05);
+  blockIn(b7, vs-.02, {labelAt: vs+1.0, subAt: vs+2.9});
 }
-/* S8 */
+/* S8 — "Orzu Mobile — ariza qoldiring!" */
 {
-  const t=SC[7].t0;
-  tl.fromTo(d8,{scale:.2,opacity:0},{scale:1,opacity:1,duration:.7,ease:'power3.out'}, t);
-  tl.fromTo(ph8,{y:520,rotationY:-80,rotationZ:-18,opacity:0,scale:.7},{y:0,rotationY:-12,rotationZ:-4,opacity:1,scale:1.1,duration:1,ease:'expo.out'}, t+.05);
-  tl.to(ph8,{rotationY:14,rotationZ:4,y:-24,duration:2.2,ease:'sine.inOut'}, t+.7);
+  const {t0, vs} = SC[7];
+  tl.fromTo(d8,{scale:.2,opacity:0},{scale:1,opacity:1,duration:.7,ease:'power3.out'}, t0);
+  tl.fromTo(ph8,{y:520,rotationY:-80,rotationZ:-18,opacity:0,scale:.7},{y:0,rotationY:-12,rotationZ:-4,opacity:1,scale:1.1,duration:1,ease:'expo.out'}, t0+.05);
+  tl.to(ph8,{rotationY:14,rotationZ:4,y:-24,duration:3.0,ease:'sine.inOut'}, t0+.7);
   spk.forEach((s,i)=>{ const a=(i/spk.length)*Math.PI*2+.3, r=330+(i%4)*70;
-    tl.fromTo(s,{x:0,y:0,opacity:0,scale:.2},{x:Math.cos(a)*r,y:Math.sin(a)*r*.9,opacity:1,scale:1,duration:.5,ease:'power3.out'}, t+.4)
-      .to(s,{opacity:0,y:'+=60',duration:.7,ease:'power1.in'}, t+.9); });
-  blockIn(b8, t+.5, {stagger:.035});
-  // fine print under the footer on the CTA scene
-  tl.fromTo('#disc',{opacity:0},{opacity:.75,duration:.4,ease:'power2.out'}, t+.7);
+    tl.fromTo(s,{x:0,y:0,opacity:0,scale:.2},{x:Math.cos(a)*r,y:Math.sin(a)*r*.9,opacity:1,scale:1,duration:.5,ease:'power3.out'}, vs+.05)
+      .to(s,{opacity:0,y:'+=60',duration:.7,ease:'power1.in'}, vs+.55); });
+  blockIn(b8, vs, {stagger:.035, labelAt: vs+1.1, subAt: vs+1.65});
+  tl.fromTo('#disc',{opacity:0},{opacity:.75,duration:.4,ease:'power2.out'}, vs+1.8);   // fine print under the footer
 }
 
 /* make sure every scene's elements start hidden before first tween (GSAP "fromTo" handles it) */

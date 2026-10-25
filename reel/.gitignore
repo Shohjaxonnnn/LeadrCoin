@@ -1,3 +1,4 @@
 node_modules/
 out/*.wav
 out/render.log
+out/video-music.mp4
