@@ -8,6 +8,8 @@
   },
   "dependencies": {
     "@fontsource-variable/bricolage-grotesque": "^5.3.0",
-    "gsap": "^3.13.0"
+    "esbuild": "^0.28.2",
+    "gsap": "^3.13.0",
+    "three": "^0.186.1"
   }
 }

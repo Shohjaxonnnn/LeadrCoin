@@ -1,0 +1,13 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#0039b8;width:1080px;height:1920px}canvas{display:block}</style></head>
+<body><canvas id="gl" width="1080" height="1920"></canvas>
+<script src="../../kit3d.js"></script>
+<script>
+K3D.init(document.getElementById('gl'));
+window.ready = (async () => {
+  await K3D.preload(Object.keys(K3D.MODELS));
+  const a = K3D.place('iphone18-silver', 300, 520, .9), b = K3D.place('iphone18-black', 780, 520, .9);
+  const c = K3D.place('iphone18-burgundy', 300, 1350, .9), d = K3D.place('iphone17-orange', 780, 1350, .9);
+  window.seek = t => { a.rotationY = -20; a.rotationZ = -6; b.rotationY = 25; c.rotationY = 20; d.rotationY = -25 + t * 10; K3D.render(); };
+  window.DURATION = 2; return true;
+})();
+</script></body></html>
