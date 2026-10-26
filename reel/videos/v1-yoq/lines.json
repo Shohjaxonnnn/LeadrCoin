@@ -1,0 +1,45 @@
+{
+ "title": "YO‘Q",
+ "tempo": 1.2,
+ "voice": {
+  "provider": "gemini",
+  "model": "gemini-3.1-flash-tts-preview",
+  "name": "Puck"
+ },
+ "scenes": [
+  {
+   "text": "Nasiya — yashirin to‘lovlar bormi?",
+   "lead": 0.45,
+   "hit": -0.05
+  },
+  {
+   "text": "Boshlang‘ich to‘lov? Yo‘q!",
+   "slam": "last"
+  },
+  {
+   "text": "Foiz va ortiqcha to‘lov? Yo‘q!",
+   "slam": "last"
+  },
+  {
+   "text": "Kechiksangiz jarima? Yo‘q!",
+   "slam": "last"
+  },
+  {
+   "text": "iCloud bloklash? Yo‘q!",
+   "slam": "last"
+  },
+  {
+   "text": "Faqat pasport va karta kerak.",
+   "tail": 1.15,
+   "hit": 0.4
+  },
+  {
+   "text": "Sovg‘a! Har bir iPhone bilan chexol, oyna va zaryadka!",
+   "tail": 0.55
+  },
+  {
+   "text": "Orzu Mobile — ariza qoldiring!",
+   "tail": 1.1
+  }
+ ]
+}

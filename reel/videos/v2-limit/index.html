@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<title>Orzu Mobile — LIMIT reel</title>
+<link rel="stylesheet" href="../../kit.css">
+</head>
+<body>
+<div id="stage"></div>
+<script src="timing.js"></script>
+<script src="../../node_modules/gsap/dist/gsap.min.js"></script>
+<script src="../../kit.js"></script>
+<script>
+/* v2 · LIMIT: limit yetmayaptimi? → MUAMMO YO‘Q! → TEXPASPORT → CTA */
+makeReel(({SC, tl, el, cardHTML, texpasportHTML, makeBlock, blockIn, slamIn, art, glowDisc, icon, discIn, popIn, bob, ctaScene}) => {
+const at = (sc, f) => sc.vs + sc.dur * f;          // a moment inside the spoken line
+
+/* S1 — "Kartada limit yetmayaptimi?" */
+{
+  const sc = SC[0], {t0, vs} = sc;
+  const a = art(sc.el);
+  const d = glowDisc(a, 160, 330, 760);
+  const card = el('div','glowsvg',cardHTML('c21'),{position:'absolute',left:'340px',top:'420px',width:'400px',height:'250px'});
+  const box = el('div','pbox','<div class="pt">Kartadagi limit</div><div class="pbar"><div class="seg old">kam</div></div>',{top:'860px'});
+  a.append(card, box);
+  const seg = box.querySelector('.old');
+  const b = makeBlock(sc.el,{hl:'LIMIT', label:'yetmayaptimi?', maxW:900, maxFont:280});
+  discIn(d, t0);
+  tl.fromTo(card,{y:300,rotation:-25,scale:.6,opacity:0},{y:0,rotation:-6,scale:1.35,opacity:1,duration:.8,ease:'expo.out'}, t0+.05);
+  bob(card, t0+.8, 1.1, 12);
+  tl.fromTo(box,{y:60,opacity:0},{y:0,opacity:1,duration:.5,ease:'power3.out'}, t0+.35);
+  tl.fromTo(seg,{width:'0%'},{width:'18%',duration:.9,ease:'power2.out'}, vs+.2);
+  tl.fromTo(seg,{opacity:1},{opacity:.35,duration:.12,yoyo:true,repeat:5,ease:'none'}, at(sc,.7));
+  blockIn(b, vs, {labelAt: at(sc,.45)});
+}
+
+/* S2 — "Muammo yo‘q!" (headline lands on the first word) */
+{
+  const sc = SC[1], {t0, slam} = sc;
+  const a = art(sc.el);
+  const d = glowDisc(a, 170, 380, 740);
+  const ic = icon(a, 'check', 290, 480);
+  const b = makeBlock(sc.el,{hl:'MUAMMO YO‘Q!', label:'yechim bor', maxW:940, maxFont:220});
+  discIn(d, t0);
+  tl.fromTo(ic,{scale:.2,rotation:-30,opacity:0},{scale:1,rotation:0,opacity:1,duration:.5,ease:'back.out(2.4)'}, slam-.1);
+  bob(ic, slam+.4, .8);
+  slamIn(b, slam, {labelAt: slam+.55});
+}
+
+/* S3 — "Avtomobil texpasporti bilan ham rasmiylashtiramiz." */
+{
+  const sc = SC[2], {t0, vs} = sc;
+  const a = art(sc.el);
+  const d = glowDisc(a, 140, 360, 800);
+  const card = el('div','glowsvg',cardHTML('c23'),{position:'absolute',left:'70px',top:'560px',width:'400px',height:'250px'});
+  const plus = el('div','glowsvg',`<svg viewBox="0 0 100 100" width="100" height="100"><path d="M50 14V86M14 50H86" stroke="#fff" stroke-width="14" stroke-linecap="round"/></svg>`,{position:'absolute',left:'462px',top:'635px',width:'100px',height:'100px'});
+  const tp = el('div','glowsvg',texpasportHTML(),{position:'absolute',left:'580px',top:'540px',width:'420px',height:'270px'});
+  a.append(card, plus, tp);
+  const b = makeBlock(sc.el,{hl:'TEXPASPORT', label:'bilan ham rasmiylashtiramiz', sub:'aylanma kam bo‘lsa ham', maxW:940, maxFont:220, subFs:52});
+  discIn(d, t0);
+  tl.fromTo(card,{x:-400,rotation:-20,scale:.85,opacity:0},{x:0,rotation:-6,scale:.85,opacity:1,duration:.6,ease:'expo.out'}, t0+.05);
+  popIn(plus, vs+.15);
+  tl.fromTo(tp,{x:500,rotation:25,opacity:0},{x:0,rotation:5,opacity:1,duration:.7,ease:'expo.out'}, at(sc,.12));
+  bob(tp, at(sc,.4), 1.2, 12);
+  blockIn(b, at(sc,.2), {labelAt: at(sc,.5), subAt: at(sc,.8)});
+}
+
+/* S4 — "Orzu Mobile — ariza qoldiring!" */
+ctaScene(SC[3], {label:'ariza qoldiring →', sub:'halol nasiya · 12–24 oy'});
+});
+</script>
+</body>
+</html>

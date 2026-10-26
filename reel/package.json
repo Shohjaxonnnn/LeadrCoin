@@ -1,12 +1,10 @@
 {
-  "name": "orzu-mobile-reel",
+  "name": "orzu-mobile-reels",
   "version": "1.0.0",
   "private": true,
-  "description": "Orzu Mobile 'YO‘Q' reel: 1080x1920, 60fps, uzbek voice-over, rendered frame-by-frame from index.html",
+  "description": "Orzu Mobile vertical reels (1080x1920, 60fps, Uzbek voice-over), rendered frame-by-frame from HTML",
   "scripts": {
-    "voice": "python3 gen_voice.py raw && python3 plan.py raw",
-    "audio": "python3 audio.py out/soundtrack.wav",
-    "render": "node render.js out/video-music.mp4 60 out/soundtrack.wav && python3 mix.py voice out/video-music.mp4 out/orzu-mobile-yoq-reel-voice.mp4 out/soundtrack.wav"
+    "build": "./build.sh"
   },
   "dependencies": {
     "@fontsource-variable/bricolage-grotesque": "^5.3.0",

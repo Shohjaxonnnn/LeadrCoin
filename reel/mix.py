@@ -2,13 +2,13 @@
 
 usage: python3 mix.py <voice_dir> <reel.mp4> <out.mp4> [soundtrack.wav]
 
-<voice_dir> holds 01..08 (wav/mp3/m4a/ogg), one clip per scene (see voiceover.md); or a single
+Run from a video folder. <voice_dir> holds 01, 02, … (wav/mp3/m4a/ogg), one clip per scene; or a single
 voice.* that is laid at t=0. Music is ducked under the voice (sidechain), the result is
 loudness-normalised to -14 LUFS and muxed over the untouched video stream.
 """
 import glob, json, os, subprocess, sys
 
-T = json.loads(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'timing.js')).read().split('=', 1)[1].strip().rstrip(';'))
+T = json.loads(open('timing.js').read().split('=', 1)[1].strip().rstrip(';'))   # run from a video folder
 START = {i + 1: sc['vs'] for i, sc in enumerate(T['scenes'])}      # voice start of each scene, from plan.py
 DUR = float(T['duration'])
 EXT = ('wav', 'mp3', 'm4a', 'ogg', 'flac', 'aac')

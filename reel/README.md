@@ -1,27 +1,37 @@
-# Orzu Mobile — "YO‘Q" reel
+# Orzu Mobile reels
 
-Vertikal reel (1080×1920, 60 fps, ~26 s, o‘zbekcha diktor ovozi bilan). `index.html` dan kadrma-kadr render qilinadi.
-Tayyor video: `out/orzu-mobile-yoq-reel-voice.mp4`.
+Vertikal reellar (1080×1920, 60 fps) HTML'dan kadrma-kadr render qilinadi. O‘zbekcha diktor ovozi bilan.
+
+```
+reel/
+  kit.css, kit.js        umumiy dvigatel: fon, logo, telefon, ikonkalar, matn bloklari, timeline, CTA sahnasi
+  gen_voice.py           diktor klipi (Aisha AI yoki Gemini), lines.json dan
+  plan.py                ovoz -> timing.js (sahnalar ovozga moslanadi, maxDuration dan oshmaydi)
+  audio.py, mix.py       musiqa/effektlar va ovozni aralashtirish
+  render.js              Playwright -> ffmpeg
+  build.sh               bitta videoni boshidan oxirigacha yig‘adi
+  videos/
+    v1-yoq/              NASIYA → 4× YO‘Q! → PASPORT + KARTA → SOVG‘A (26 s, Gemini Puck)
+    v2-limit/            LIMIT → MUAMMO YO‘Q! → TEXPASPORT (≤15 s, Aisha Amir)
+    v3-seniki/           KIMNIKI? → iCloud → QUTI → SIZNIKI! (≤15 s)
+    v4-tradein/          ESKI TELEFON → TRADE-IN → QOLGANI nasiyada (≤15 s)
+    v5-katalog/          EMAS! → HAMMASI BOR → YETKAZAMIZ (≤15 s)
+```
+
+Har bir video papkasida: `index.html` (sahnalar), `lines.json` (diktor matni, ovoz, vaqt sozlamalari),
+`timing.js` (plan.py yozadi), `raw/` (asl ovoz), `voice/` (tayyor ovoz), `out/` (tayyor video).
 
 ```
 npm install
-GEMINI_API_KEY=... python3 gen_voice.py raw      # 8 ta diktor klipi (kalit faqat muhitda, faylga yozilmaydi)
-python3 plan.py raw                              # voice/*.wav + timing.js (sahnalar ovozga moslanadi)
-python3 audio.py out/soundtrack.wav              # musiqa/effektlar (timing.js ga bog‘langan)
-node render.js out/video-music.mp4 60 out/soundtrack.wav   # ~8 daqiqa, 4 yadro
-python3 mix.py voice out/video-music.mp4 out/orzu-mobile-yoq-reel-voice.mp4 out/soundtrack.wav
+AISHA_API_KEY=... ./build.sh videos/v2-limit       # ~5 daqiqa (4 yadro)
 ```
 
-`timing.js` yagona manba: sahna chegaralari, ovoz boshlanishi va "Yo‘q!" zarbasi vaqti. Animatsiya, effektlar va
-mikser hammasi shundan o‘qiydi, shuning uchun rasm va ovoz doim mos tushadi.
-
-## Sahnalar
-NASIYA (savol) → 4 ta "YO‘Q!" (boshlang‘ich to‘lov, foiz, jarima, iCloud) → PASPORT + KARTA → SOVG‘A (chexol, oyna,
-zaryadka) → ORZU MOBILE, ariza qoldiring. Matnlar: `voiceover.md`.
+Ovozsiz ko‘rib chiqish: `cd videos/v2-limit && python3 ../../plan.py --estimate && python3 ../../tools/sheet.py preview.png`.
+Kalitlar faqat muhit o‘zgaruvchisida, hech qaysi faylga yozilmaydi.
 
 ## Uslub
-Ranglar Orzu Mobile reels'laridan o‘lchangan (`index.html` `:root`): label `#2299F5`, matn `#00021C`,
-fon `#02081A → #0039B8 → #000`, neon yorug‘lik `#4DB8FF`, oq `#FCFCFC`.
+Ranglar Orzu Mobile reels'laridan o‘lchangan (`kit.css` `:root`): label `#2299F5`, matn `#00021C`,
+fon `#02081A → #0039B8 → #000`, neon yorug‘lik `#4DB8FF`, oq `#FCFCFC`. Logo yuqori chapda.
 
-Shrift: Orzu Canva'da **Neue Machina** (Ultrabold / Regular) ishlatadi. U pullik shrift, ochiq manbalarda yo‘q,
-shuning uchun hozir eng yaqin ochiq shrift **Bricolage Grotesque** turibdi. Almashtirish: `--font` va `@font-face`.
+Shrift: Orzu Canva'da **Neue Machina** ishlatadi (pullik). Hozir eng yaqin ochiq shrift **Bricolage Grotesque**;
+almashtirish `kit.css` dagi `--font` va `@font-face`.

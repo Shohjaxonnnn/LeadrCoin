@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<title>Orzu Mobile — SIZNIKI reel</title>
+<link rel="stylesheet" href="../../kit.css">
+</head>
+<body>
+<div id="stage"></div>
+<script src="timing.js"></script>
+<script src="../../node_modules/gsap/dist/gsap.min.js"></script>
+<script src="../../kit.js"></script>
+<script>
+/* v3 · SIZNIKI: kimniki? → iCloud bog‘lanmaydi → quti o‘zingizda → SIZNIKI! → CTA */
+makeReel(({SC, tl, el, mkPhone, makeBlock, blockIn, slamIn, art, glowDisc, icon, strikeOver, strikeAt, discIn, popIn, bob, ctaScene}) => {
+const at = (sc, f) => sc.vs + sc.dur * f;          // a moment inside the spoken line
+
+/* S1 — "Nasiyaga olingan telefon — kimniki?" (headline on the last word) */
+{
+  const sc = SC[0], {t0, t1, vs, slam} = sc;
+  const a = art(sc.el, true);
+  const d = glowDisc(a, 190, 360, 700);
+  const ph = mkPhone('p31', 390, 330, 1.0); a.appendChild(ph);
+  const q = icon(a, 'question', 650, 300, 260);
+  const b = makeBlock(sc.el,{hl:'KIMNIKI?', label:'nasiyaga olingan telefon', maxW:900, maxFont:260});
+  discIn(d, t0);
+  tl.fromTo(ph,{y:420,rotationY:-70,rotationZ:-20,scale:.6,opacity:0},{y:0,rotationY:-14,rotationZ:-8,scale:1,opacity:1,duration:1,ease:'expo.out'}, t0+.05);
+  tl.to(ph,{rotationY:18,rotationZ:6,y:-20,duration:t1-t0,ease:'sine.inOut'}, t0+.6);
+  popIn(q, slam-.15);
+  slamIn(b, slam, {labelAt: vs});
+}
+
+/* S2 — "iCloud bog‘lamaymiz." */
+{
+  const sc = SC[1], {t0, vs} = sc;
+  const a = art(sc.el);
+  const d = glowDisc(a, 170, 380, 740);
+  const ic = icon(a, 'cloud', 290, 480);
+  const st = strikeOver(a, 290, 480);
+  const b = makeBlock(sc.el,{hl:'iCloud', keepCase:true, label:'bog‘lanmaydi, bloklanmaydi', maxW:900, maxFont:250});
+  discIn(d, t0);
+  popIn(ic, t0+.04);
+  bob(ic, t0+.5, 1.0);
+  strikeAt(st, at(sc,.62));
+  tl.fromTo(ic,{opacity:1},{opacity:.35,duration:.2}, at(sc,.62)-.05);
+  blockIn(b, vs, {labelAt: at(sc,.55)});
+}
+
+/* S3 — "Qutini olib qolmaymiz." */
+{
+  const sc = SC[2], {t0, vs} = sc;
+  const a = art(sc.el);
+  const d = glowDisc(a, 170, 380, 740);
+  const ic = icon(a, 'box', 290, 470);
+  const ck = icon(a, 'check', 650, 770, 200);
+  const b = makeBlock(sc.el,{hl:'QUTI', label:'o‘zingizda qoladi', maxW:900, maxFont:280});
+  discIn(d, t0);
+  popIn(ic, t0+.04);
+  bob(ic, t0+.5, 1.0);
+  popIn(ck, at(sc,.6));
+  blockIn(b, vs, {labelAt: at(sc,.5)});
+}
+
+/* S4 — "Qurilma to‘liq sizniki!" (headline on the last word) */
+{
+  const sc = SC[3], {t0, t1, vs, slam} = sc;
+  const a = art(sc.el, true);
+  const d = glowDisc(a, 150, 360, 780);
+  const bx = icon(a, 'box', 90, 720, 220);
+  const ph = mkPhone('p34', 390, 340, .95); a.appendChild(ph);
+  const ck = icon(a, 'check', 770, 720, 220);
+  const b = makeBlock(sc.el,{hl:'SIZNIKI!', label:'to‘liq komplekt bilan', maxW:900, maxFont:280});
+  discIn(d, t0);
+  tl.fromTo(ph,{y:400,rotationY:-60,opacity:0},{y:0,rotationY:-12,opacity:1,duration:.8,ease:'expo.out'}, t0+.05);
+  tl.to(ph,{rotationY:14,y:-18,duration:t1-t0,ease:'sine.inOut'}, t0+.6);
+  popIn(bx, vs+.1);
+  popIn(ck, slam-.1);
+  slamIn(b, slam, {labelAt: vs});
+}
+
+/* S5 — "Orzu Mobile — halol nasiya!" */
+ctaScene(SC[4], {label:'halol nasiya', sub:'ariza qoldiring →'});
+});
+</script>
+</body>
+</html>

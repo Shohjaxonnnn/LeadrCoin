@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<title>Orzu Mobile — TRADE-IN reel</title>
+<link rel="stylesheet" href="../../kit.css">
+</head>
+<body>
+<div id="stage"></div>
+<script src="timing.js"></script>
+<script src="../../node_modules/gsap/dist/gsap.min.js"></script>
+<script src="../../kit.js"></script>
+<script>
+/* v4 · TRADE-IN: eski telefon → eskisi narxga hisoblanadi → qolgani nasiyada → CTA */
+makeReel(({SC, tl, el, TINT, mkPhone, makeBlock, blockIn, art, glowDisc, icon, discIn, popIn, ctaScene}) => {
+const at = (sc, f) => sc.vs + sc.dur * f;          // a moment inside the spoken line
+const priceBox = (a, segs) => { const b = el('div','pbox',`<div class="pt">Yangi qurilma narxi</div><div class="pbar">${segs}</div>`,{top:'960px'}); a.appendChild(b); return b; };
+
+/* S1 — "Eski telefoningiz chang bosyaptimi?" */
+{
+  const sc = SC[0], {t0, vs} = sc;
+  const a = art(sc.el, true);
+  const d = glowDisc(a, 190, 360, 700);
+  const ph = mkPhone('p41', 390, 360, 1.0, '', TINT.dark); ph.style.filter = 'saturate(.45) brightness(.85)'; a.appendChild(ph);
+  const dust = [];
+  for (let i=0;i<22;i++){ const s=el('div','abs',null,{left:(300+((i*137)%480))+'px',top:(380+((i*89)%560))+'px',width:(5+(i%4)*3)+'px',height:(5+(i%4)*3)+'px',borderRadius:'50%',background:'rgba(210,220,235,.75)',filter:'blur(1px)'}); a.appendChild(s); dust.push(s); }
+  const b = makeBlock(sc.el,{hl:'ESKI TELEFON', label:'chang bosyaptimi?', maxW:940, maxFont:220});
+  discIn(d, t0);
+  tl.fromTo(ph,{y:300,rotationZ:-30,scale:.7,opacity:0},{y:40,rotationZ:-14,scale:1,opacity:1,duration:.9,ease:'expo.out'}, t0+.05);
+  dust.forEach((s,i)=> tl.fromTo(s,{opacity:0,y:0},{opacity:.9,y:-40-(i%5)*14,duration:2.2,ease:'sine.out'}, t0+.3+(i%6)*.08));
+  blockIn(b, vs, {labelAt: at(sc,.45)});
+}
+
+/* S2 — "Olib keling — yangisining narxiga hisoblaymiz." */
+{
+  const sc = SC[1], {t0, vs} = sc;
+  const a = art(sc.el, true);
+  const d = glowDisc(a, 140, 320, 800);
+  const old = mkPhone('p42o', 110, 330, .66, '', TINT.dark); old.style.filter = 'saturate(.5) brightness(.85)';
+  const nw = mkPhone('p42n', 670, 310, .72, '', TINT.blue);
+  a.append(old, nw);
+  const arr = icon(a, 'arrow', 430, 520, 220);
+  const box = priceBox(a, '<div class="seg old">eski qurilma</div>');
+  const seg = box.querySelector('.old');
+  const b = makeBlock(sc.el,{hl:'TRADE-IN', label:'eskisi narxga hisoblanadi', maxW:900, maxFont:240});
+  discIn(d, t0);
+  tl.fromTo(old,{x:-300,rotationZ:0,opacity:0},{x:0,rotationZ:-8,opacity:1,duration:.6,ease:'expo.out'}, t0+.05);
+  popIn(arr, vs+.2);
+  tl.fromTo(nw,{x:300,rotationZ:0,opacity:0},{x:0,rotationZ:6,opacity:1,duration:.6,ease:'expo.out'}, at(sc,.3));
+  tl.fromTo(box,{y:60,opacity:0},{y:0,opacity:1,duration:.45,ease:'power3.out'}, at(sc,.35));
+  tl.fromTo(seg,{width:'0%'},{width:'40%',duration:.8,ease:'power2.out'}, at(sc,.6));
+  blockIn(b, vs+.05, {labelAt: at(sc,.6)});
+}
+
+/* S3 — "Qolgani — halol nasiyada." */
+{
+  const sc = SC[2], {t0, vs} = sc;
+  const a = art(sc.el, true);
+  const d = glowDisc(a, 170, 300, 740);
+  const nw = mkPhone('p43', 390, 290, .95, '', TINT.blue); a.appendChild(nw);
+  const box = priceBox(a, '<div class="seg old" style="width:40%">eski</div><div class="seg rest" style="left:40%">nasiya · 12–24 oy</div>');
+  const rest = box.querySelector('.rest');
+  const b = makeBlock(sc.el,{hl:'QOLGANI', label:'halol nasiyada', maxW:900, maxFont:260});
+  discIn(d, t0);
+  tl.fromTo(nw,{y:300,rotationY:-50,opacity:0},{y:0,rotationY:-10,opacity:1,duration:.7,ease:'expo.out'}, t0+.05);
+  tl.fromTo(box,{y:60,opacity:0},{y:0,opacity:1,duration:.4,ease:'power3.out'}, t0+.15);
+  tl.fromTo(rest,{width:'0%'},{width:'60%',duration:.9,ease:'power2.out'}, at(sc,.35));
+  blockIn(b, vs, {labelAt: at(sc,.5)});
+}
+
+/* S4 — "Orzu Mobile — eskisini topshiring, yangisini oling!" */
+ctaScene(SC[3], {label:'eskisini topshiring →', sub:'yangisini oling · halol nasiya', tint: TINT.blue});
+});
+</script>
+</body>
+</html>

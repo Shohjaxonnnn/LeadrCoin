@@ -1,5 +1,5 @@
 """Synthesised soundtrack for the reel: 120 bpm beat, bass, pad, whooshes and impacts
-locked to the scene cuts in index.html. No samples, no external assets."""
+locked to the scene cuts in timing.js (run from a video folder). No samples, no external assets."""
 import json, sys, wave
 import numpy as np
 
@@ -16,7 +16,7 @@ rng = np.random.default_rng(7)
 
 # scene cuts and headline slam moments, straight from the plan
 CUTS = [x['t0'] for x in SCN[1:]]
-HITS = [SCN[0]['vs'] - 0.05] + [x['slam'] for x in SCN[1:5]] + [SCN[5]['vs'] + 0.4, SCN[6]['vs'], SCN[7]['vs']]
+HITS = [x.get('hit', x.get('slam', x['vs'])) for x in SCN]
 
 L = np.zeros(N); R = np.zeros(N)
 

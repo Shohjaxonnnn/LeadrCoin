@@ -1,0 +1,28 @@
+{
+ "title": "LIMIT",
+ "maxDuration": 15,
+ "tempo": 1.0,
+ "voice": {
+  "provider": "aisha",
+  "model": "Amir",
+  "mood": "Neutral",
+  "speed": 1.0
+ },
+ "scenes": [
+  {
+   "text": "Kartada limit yetmayaptimi?",
+   "lead": 0.4
+  },
+  {
+   "text": "Muammo yo‘q!",
+   "slam": "first"
+  },
+  {
+   "text": "Avtomobil texpasporti bilan ham rasmiylashtiramiz.",
+   "tail": 0.5
+  },
+  {
+   "text": "Orzu Mobile — ariza qoldiring!"
+  }
+ ]
+}

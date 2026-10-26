@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<title>Orzu Mobile — KATALOG reel</title>
+<link rel="stylesheet" href="../../kit.css">
+</head>
+<body>
+<div id="stage"></div>
+<script src="timing.js"></script>
+<script src="../../node_modules/gsap/dist/gsap.min.js"></script>
+<script src="../../kit.js"></script>
+<script>
+/* v5 · KATALOG: faqat iPhone EMAS! → iPad, MacBook, Dyson, DeLonghi → yetkazamiz → CTA */
+makeReel(({SC, tl, gsap, el, mkPhone, makeBlock, blockIn, slamIn, art, glowDisc, icon, discIn, popIn, bob, ctaScene}) => {
+const at = (sc, f) => sc.vs + sc.dur * f;          // a moment inside the spoken line
+
+/* S1 — "Faqat iPhone emas!" (headline on the last word) */
+{
+  const sc = SC[0], {t0, vs, slam} = sc;
+  const a = art(sc.el, true);
+  const d = glowDisc(a, 190, 360, 700);
+  const ph = mkPhone('p51', 390, 330, 1.05); a.appendChild(ph);
+  const b = makeBlock(sc.el,{hl:'EMAS!', label:'faqat iPhone', maxW:900, maxFont:290});
+  discIn(d, t0);
+  tl.fromTo(ph,{y:420,rotationY:-70,rotationZ:-24,scale:.6,opacity:0},{y:0,rotationY:-16,rotationZ:-10,scale:1.05,opacity:1,duration:.9,ease:'expo.out'}, t0+.05);
+  tl.to(ph,{x:-60,rotationZ:-18,scale:.9,duration:.35,ease:'power3.out'}, slam);
+  slamIn(b, slam, {labelAt: vs});
+}
+
+/* S2 — "iPad, MacBook, Dyson va DeLonghi ham bor." */
+{
+  const sc = SC[1], {t0} = sc;
+  const a = art(sc.el);
+  const d = glowDisc(a, 130, 330, 820);
+  const items = [['ipad','iPad',330,520], ['macbook','MacBook',750,520], ['dryer','Dyson',330,880], ['coffee','DeLonghi',750,880]];
+  const b = makeBlock(sc.el,{hl:'HAMMASI BOR', label:'12–24 oyga nasiya', maxW:940, maxFont:220});
+  discIn(d, t0);
+  items.forEach(([name, cap, x, y], i) => {
+    const ic = icon(a, name, x-130, y-150, 260);
+    const c = el('div','icap',cap,{left:x+'px',top:(y+120)+'px'}); a.appendChild(c);
+    const t = at(sc, .04 + i*.2);                    // each item pops as it is named
+    popIn(ic, t);
+    tl.fromTo(c,{opacity:0,y:20},{opacity:1,y:0,duration:.3,ease:'power2.out'}, t+.1);
+    bob(ic, t+.5, .9, 10);
+  });
+  blockIn(b, at(sc,.82), {labelAt: at(sc,.82)+.45});
+}
+
+/* S3 — "Butun O‘zbekiston bo‘ylab yetkazamiz." */
+{
+  const sc = SC[2], {t0, vs, dur} = sc;
+  const a = art(sc.el);
+  const d = glowDisc(a, 140, 330, 800);
+  const map = el('div','glowsvg',`<svg viewBox="0 0 1080 900" width="1080" height="900"><path class="rt" d="M130 620 C 260 520, 330 640, 420 560 S 600 440, 690 470 S 860 330, 950 300" stroke="#4DB8FF" stroke-width="10" fill="none" stroke-linecap="round"/></svg>`,{position:'absolute',left:'0px',top:'200px',width:'1080px',height:'900px'});
+  a.appendChild(map);
+  const path = map.querySelector('.rt'), L = path.getTotalLength(), drive = dur*.9;
+  const truck = icon(a, 'truck', 0, 0, 150);
+  const b = makeBlock(sc.el,{hl:'YETKAZAMIZ', label:'butun O‘zbekiston bo‘ylab', maxW:900, maxFont:230});
+  discIn(d, t0);
+  gsap.set(path,{strokeDasharray:L,strokeDashoffset:L});
+  tl.to(path,{strokeDashoffset:0,duration:drive,ease:'none'}, vs);
+  const prox = {p:0};
+  tl.fromTo(truck,{opacity:0},{opacity:1,duration:.2}, vs);
+  tl.fromTo(prox,{p:0},{p:1,duration:drive,ease:'none',onUpdate(){ const pt=path.getPointAtLength(prox.p*L); truck.style.transform=`translate(${pt.x-75}px,${pt.y+200-125}px)`; }}, vs);
+  [['Nukus',130,620], ['Buxoro',420,560], ['Samarqand',690,470], ['Toshkent',950,300]].forEach(([n, x, y], i) => {
+    const dot = el('div','dot',null,{left:x+'px',top:(y+200)+'px'});
+    const lab = el('div','city',n,{left:(x-60)+'px',top:(y+228)+'px'});
+    a.append(dot, lab);
+    const t = vs + drive*(i/3);
+    popIn(dot, t);
+    tl.fromTo(lab,{opacity:0,y:12},{opacity:1,y:0,duration:.3,ease:'power2.out'}, t+.05);
+  });
+  blockIn(b, at(sc,.62), {labelAt: vs});
+}
+
+/* S4 — "Orzu Mobile — hammasi halol nasiyada!" */
+ctaScene(SC[3], {label:'hammasi halol nasiyada', sub:'ariza qoldiring →'});
+});
+</script>
+</body>
+</html>

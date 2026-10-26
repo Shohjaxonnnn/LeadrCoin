@@ -17,13 +17,5 @@ og‘ib ketadi, shuning uchun u majburiy. Klipga 1.2× tezlik beriladi (`plan.py
 20 yoshdan, 12–24 oy, "butun O‘zbekistonga yetkazamiz" va "shartlar individual" ekranda yoziladi (ovozda aytilmaydi).
 
 ## Ovozni almashtirish
-Boshqa ovoz (diktor yoki boshqa TTS) uchun 8 ta klipni `raw/01.wav … 08.wav` qilib qo‘ying, keyin:
-
-```
-python3 plan.py raw        # tezlik/daraja + timing.js (sahnalar ovoz uzunligiga moslanadi)
-python3 audio.py out/soundtrack.wav
-node render.js out/video-music.mp4 60 out/soundtrack.wav
-python3 mix.py voice out/video-music.mp4 out/orzu-mobile-yoq-reel-voice.mp4 out/soundtrack.wav
-```
-
-Matnni o‘zgartirsangiz `gen_voice.py` dagi `LINES` ni ham yangilang.
+Matn va ovoz sozlamalari `lines.json` da. Boshqa ovoz (diktor yoki boshqa TTS) uchun klipni `raw/01.wav …` qilib qo‘ying,
+keyin `reel/` dan: `./build.sh videos/v1-yoq --keep-voice` (ovozni qayta yaratmaydi, qolganini yig‘adi).

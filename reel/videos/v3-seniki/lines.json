@@ -1,0 +1,31 @@
+{
+ "title": "SIZNIKI",
+ "maxDuration": 15,
+ "tempo": 1.0,
+ "voice": {
+  "provider": "aisha",
+  "model": "Amir",
+  "mood": "Neutral",
+  "speed": 1.0
+ },
+ "scenes": [
+  {
+   "text": "Nasiyaga olingan telefon — kimniki?",
+   "lead": 0.4,
+   "slam": "last"
+  },
+  {
+   "text": "iCloud bog‘lamaymiz."
+  },
+  {
+   "text": "Qutini olib qolmaymiz."
+  },
+  {
+   "text": "Qurilma to‘liq sizniki!",
+   "slam": "last"
+  },
+  {
+   "text": "Orzu Mobile — halol nasiya!"
+  }
+ ]
+}

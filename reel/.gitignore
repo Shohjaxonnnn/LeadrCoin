@@ -1,7 +1,7 @@
 node_modules/
-out/*.wav
-out/render.log
-out/video-music.mp4
-out/samples.log
-out/voice-samples/*.wav
 __pycache__/
+out/
+voice-samples/*.wav
+videos/*/out/*.wav
+videos/*/out/video-music.mp4
+videos/*/out/render.log

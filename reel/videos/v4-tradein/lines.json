@@ -1,0 +1,28 @@
+{
+ "title": "TRADE-IN",
+ "maxDuration": 15,
+ "tempo": 1.0,
+ "voice": {
+  "provider": "aisha",
+  "model": "Amir",
+  "mood": "Neutral",
+  "speed": 1.0
+ },
+ "scenes": [
+  {
+   "text": "Eski telefoningiz chang bosyaptimi?",
+   "lead": 0.4
+  },
+  {
+   "text": "Olib keling — yangisining narxiga hisoblaymiz.",
+   "tail": 0.45
+  },
+  {
+   "text": "Qolgani — halol nasiyada.",
+   "tail": 0.5
+  },
+  {
+   "text": "Orzu Mobile — eskisini topshiring, yangisini oling!"
+  }
+ ]
+}

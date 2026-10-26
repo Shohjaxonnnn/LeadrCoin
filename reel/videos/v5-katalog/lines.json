@@ -1,0 +1,29 @@
+{
+ "title": "KATALOG",
+ "maxDuration": 15,
+ "tempo": 1.0,
+ "voice": {
+  "provider": "aisha",
+  "model": "Amir",
+  "mood": "Neutral",
+  "speed": 1.0
+ },
+ "scenes": [
+  {
+   "text": "Faqat iPhone emas!",
+   "lead": 0.4,
+   "slam": "last"
+  },
+  {
+   "text": "iPad, MacBook, Dyson va DeLonghi ham bor.",
+   "tail": 0.5
+  },
+  {
+   "text": "Butun O‘zbekiston bo‘ylab yetkazamiz.",
+   "tail": 0.45
+  },
+  {
+   "text": "Orzu Mobile — hammasi halol nasiyada!"
+  }
+ ]
+}
