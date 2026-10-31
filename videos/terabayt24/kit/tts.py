@@ -4,10 +4,12 @@ import json, subprocess, base64, sys, os, hashlib, wave
 import numpy as np
 D = sys.argv[1]; SR = 48000
 CACHE = os.path.join(os.path.dirname(__file__), 'tts_cache'); os.makedirs(CACHE, exist_ok=True)
-MODEL, VOICE = os.environ.get('TTS_MODEL', 'gemini-3.8-flash-tts'), 'Algenib'
+MODEL, VOICE = os.environ.get('TTS_MODEL', 'gemini-3.8-flash-tts'), os.environ.get('VOICE', 'Algenib')
 STYLE = ("Read this Uzbek (Latin script) advertisement line as a native speaker from Tashkent: "
          "pure, natural Uzbek pronunciation with no Russian or English accent. "
          "Young male announcer, energetic, warm and confident, upbeat commercial pace:\n\n")
+if os.environ.get('FEMALE') == '1':
+    STYLE = STYLE.replace('Young male announcer, energetic, warm and confident', 'Young female announcer, friendly, warm, bright and confident, smiling voice')
 MAX_END, MIN_END = 19.7, 15.5
 LEAD, TAIL, FIRST = 0.28, 0.3, 0.35
 

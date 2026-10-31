@@ -22,7 +22,13 @@ const rim2 = new THREE.DirectionalLight(0x02f894, 2.0); rim2.position.set(-4, 2,
 const fill = new THREE.DirectionalLight(0xbfffe6, 0.6); fill.position.set(0, -4, 4); scene.add(fill);
 
 const dl = new DRACOLoader(); dl.setDecoderPath(new URL('./lib/draco/', import.meta.url).href);
-const MODELS = { iphone: { url: './iphone.glb', axis: 'y', size: 1.63 }, macbook: { url: './macbook.glb', axis: 'x', size: 2.3 } };
+const MODELS = {
+  iphone: { url: './iphone.glb', axis: 'y', size: 1.63 },
+  macbook: { url: './macbook.glb', axis: 'x', size: 2.3 },
+  // iPhone 18 Pro Max (user-supplied). Body colour lives in the COLOUR_* materials; the screen faces +z, so turn it
+  // around to match the other phone model (back towards the camera at ry = 0).
+  iphone18: { url: './iphone18.glb', axis: 'y', size: 1.66, flip: true, tintPrefix: 'COLOUR_', tintSkip: new Set(['COLOUR_Cherry_Screen']) },
+};
 const loader = new GLTFLoader().setDRACOLoader(dl);
 const ready = Promise.all(Object.entries(MODELS).map(([k, m]) => loader.loadAsync(new URL(m.url, import.meta.url).href).then((g) => { m.gltf = g; })));
 
@@ -32,11 +38,14 @@ function makePhone(tint, model = 'iphone') {
   m.traverse((o) => {
     if (!o.isMesh) return;
     o.material = o.material.clone();
-    if (tint && !KEEP.has(o.material.name)) o.material.color = new THREE.Color(tint);
+    if (!tint) return;
+    if (M.tintPrefix) { if (o.material.name.startsWith(M.tintPrefix) && !M.tintSkip.has(o.material.name)) o.material.color = new THREE.Color(tint); }
+    else if (!KEEP.has(o.material.name)) o.material.color = new THREE.Color(tint);
   });
   const box = new THREE.Box3().setFromObject(m), c = box.getCenter(new THREE.Vector3()), sz = box.getSize(new THREE.Vector3());
   const k = M.size / sz[M.axis]; m.position.copy(c).multiplyScalar(-k); m.scale.setScalar(k);
-  const g = new THREE.Group(); g.add(m);
+  const g = new THREE.Group();
+  if (M.flip) { const f = new THREE.Group(); f.rotation.y = Math.PI; f.add(m); g.add(f); } else g.add(m);
   g.updateMatrixWorld(true);
   // The camera plateau and the Apple logo share palette slot 3 (semi-transparent black "glass") of PaletteMaterial003.
   // On a coloured phone that slot paints the plateau as a dark square, so repaint the slot with the body colour
@@ -58,7 +67,7 @@ function makePhone(tint, model = 'iphone') {
   g.userData.mats = []; m.traverse((o) => { if (o.isMesh) g.userData.mats.push([o.material, o.material.opacity, o.material.transparent]); });
   return g;
 }
-const COLORS = { bordo: '#741b2e', qora: '#26272c', kumush: '#c9ccd1', yashil: '#2f6b55', kok: '#2b3f66' };
+const COLORS = { oq: '#e8e6e1', bordo: '#741b2e', qora: '#26272c', kumush: '#c9ccd1', yashil: '#2f6b55', kok: '#2b3f66' };
 const ease = (p) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
 const outQ = (p) => 1 - Math.pow(1 - p, 4);
 const DEF = { x: 540, y: 1000, s: 1, rx: 0, ry: 0, rz: 0, o: 1, z: 0 };
